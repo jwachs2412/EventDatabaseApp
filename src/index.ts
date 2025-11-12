@@ -46,3 +46,21 @@ function listEvents(events: Event[]) {
 }
 
 listEvents(eventDatabase)
+
+function getEventById(eventId: number): Event | undefined {
+  return eventDatabase.find(event => event.id === eventId)
+}
+
+// AUTHOR'S SOLUTION - this will make it slightly more user-friendly
+// function getEventById(eventId: number): Event | undefined {
+//   const foundEvent = eventDatabase.find(event => event.id === eventId)
+//   if (!foundEvent) {
+//     console.log(`❌ No event found with ID: ${eventId}`)
+//   } else {
+//     console.log(`✅ Found event: ${foundEvent.name}`)
+//   }
+//   return foundEvent
+// }
+
+const event = getEventById(3)
+console.log(event)
