@@ -37,3 +37,12 @@ addEvent({
   date: "9/8/2023",
   notes: "Incredible show, worth every penny!"
 })
+
+function listEvents(events: Event[]) {
+  console.log("\nList of All Events You Have Attended:\n")
+  for (const currentEvent of events) {
+    console.log(`Event Type: ${currentEvent.type.charAt(0).toUpperCase() + currentEvent.type.slice(1)}\nEvent: ${currentEvent.name.charAt(0).toUpperCase() + currentEvent.name.slice(1)}\nDate(s): ${currentEvent.date}\nSeat: ${currentEvent.seat ? currentEvent.seat : "N/A"}\nRow: ${currentEvent.row ? currentEvent.row : "N/A"}\nEvent Notes: ${currentEvent.notes ? currentEvent.notes : "N/A"}\n`)
+  }
+}
+
+listEvents(eventDatabase)

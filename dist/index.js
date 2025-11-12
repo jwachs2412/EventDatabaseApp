@@ -11,6 +11,13 @@ function addEvent(obj) {
     console.log(eventDatabase);
     return eventDatabase;
 }
+// AUTHOR'S SOLUTION - more production ready - understand this before implementing
+// function addEvent(obj: Omit<Event, "id">): Event[] {
+//   const newId = eventDatabase.length > 0 ? eventDatabase[eventDatabase.length - 1].id + 1 : 1
+//   eventDatabase.push({ id: newId, ...obj })
+//   console.log(eventDatabase)
+//   return eventDatabase
+// }
 addEvent({
     id: 5,
     type: "theater",
@@ -18,4 +25,11 @@ addEvent({
     date: "9/8/2023",
     notes: "Incredible show, worth every penny!"
 });
+function listEvents(events) {
+    console.log("\nList of All Events You Have Attended:\n");
+    for (const currentEvent of events) {
+        console.log(`Event Type: ${currentEvent.type.charAt(0).toUpperCase() + currentEvent.type.slice(1)}\nEvent: ${currentEvent.name.charAt(0).toUpperCase() + currentEvent.name.slice(1)}\nDate(s): ${currentEvent.date}\nSeat: ${currentEvent.seat ? currentEvent.seat : "N/A"}\nRow: ${currentEvent.row ? currentEvent.row : "N/A"}\nEvent Notes: ${currentEvent.notes ? currentEvent.notes : "N/A"}\n`);
+    }
+}
+listEvents(eventDatabase);
 //# sourceMappingURL=index.js.map
