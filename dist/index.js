@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 // Event Database Array
 const eventDatabase = [
-    { id: 1, type: "concert", name: "Chris Stapleton", date: "12/12/2018", row: 8, seat: 23, notes: "The concert was outstanding. 10/10" },
-    { id: 2, type: "sports", name: "Cleveland Browns v Pittsburgh Steelers", date: "11/6/1998", notes: "The Browns won 23-14 and played outstanding. 10/10" },
-    { id: 3, type: "concert", name: "Led Zepplin", date: "6/19/1974", row: "FF", seat: 2, notes: "The concert was outstanding. Led Zepplin blew the roof off! 10/10" },
-    { id: 4, type: "festival", name: "Bonnaroo", date: "7/12/2024 - 7/14/2024" }
+    { id: 0, type: "concert", name: "Chris Stapleton", date: "12/12/2018", row: 8, seat: 23, notes: "The concert was outstanding. 10/10" },
+    { id: 1, type: "sports", name: "Cleveland Browns v Pittsburgh Steelers", date: "11/6/1998", notes: "The Browns won 23-14 and played outstanding. 10/10" },
+    { id: 2, type: "concert", name: "Led Zepplin", date: "6/19/1974", row: "FF", seat: 2, notes: "The concert was outstanding. Led Zepplin blew the roof off! 10/10" },
+    { id: 3, type: "festival", name: "Bonnaroo", date: "7/12/2024 - 7/14/2024" }
 ];
 // AUTHOR SUGGESTION
 // Capitalization Function
@@ -26,7 +26,7 @@ function addEvent(obj) {
 //   return eventDatabase
 // }
 addEvent({
-    id: 5,
+    id: 4,
     type: "theater",
     name: "Hamilton",
     date: "9/8/2023",
@@ -85,7 +85,7 @@ function viewEvent(id) {
 //   }
 // }
 viewEvent(2);
-// Edit Single Event
+// Edit Single Event - keeping Partial in there as a helper - makes all Event props optional for update - refactor below function at some point, removing the if statements and replacing with less code
 function editEvent(id, updates) {
     const eventToEdit = getEventById(id);
     if (eventToEdit) {
@@ -107,12 +107,28 @@ function editEvent(id, updates) {
         if (updates.notes) {
             eventToEdit.notes = updates.notes;
         }
+        console.log(`Event id: ${id} has been updated. Here is the updated event database: \n`);
+        console.log(eventDatabase);
     }
     else {
-        console.log(`The event with id: ${id} was not found.`);
+        console.log(`Event id: ${id} was not found.`);
     }
-    console.log(`Event id: ${id} has been updated. Here is the updated event database: \n`);
-    console.log(eventDatabase);
 }
 editEvent(1, { notes: "Amazing live performance!", seat: 12 });
+// Delete Event
+function deleteEvent(id) {
+    const index = eventDatabase.findIndex(event => event.id === id);
+    if (index >= 0) {
+        const eventRemoved = eventDatabase.splice(index, 1)[0];
+        if (eventRemoved) {
+            console.log(`\nEvent "${eventRemoved.name}" (ID: ${eventRemoved.id}) deleted successfully.`);
+            console.log(eventDatabase);
+        }
+    }
+    else {
+        console.log(`\nEvent not found.`);
+    }
+}
+deleteEvent(2);
+deleteEvent(10);
 //# sourceMappingURL=index.js.map
