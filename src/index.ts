@@ -108,3 +108,40 @@ function viewEvent(id: number): void {
 // }
 
 viewEvent(2)
+
+// Edit Single Event - keeping Partial in there as a helper - makes all Event props optional for update
+function editEvent(id: number, updates: Partial<Event>): void {
+  const eventToEdit = getEventById(id)
+
+  if (eventToEdit) {
+    if (updates.type) {
+      eventToEdit.type = updates.type
+    }
+
+    if (updates.name) {
+      eventToEdit.name = updates.name
+    }
+
+    if (updates.date) {
+      eventToEdit.date = updates.date
+    }
+
+    if (updates.row) {
+      eventToEdit.row = updates.row
+    }
+
+    if (updates.seat) {
+      eventToEdit.seat = updates.seat
+    }
+
+    if (updates.notes) {
+      eventToEdit.notes = updates.notes
+    }
+  } else {
+    console.log(`The event with id: ${id} was not found.`)
+  }
+  console.log(`Event id: ${id} has been updated. Here is the updated event database: \n`)
+  console.log(eventDatabase)
+}
+
+editEvent(1, { notes: "Amazing live performance!", seat: 12 })
