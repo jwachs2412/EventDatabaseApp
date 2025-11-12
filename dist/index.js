@@ -7,6 +7,11 @@ const eventDatabase = [
     { id: 3, type: "concert", name: "Led Zepplin", date: "6/19/1974", row: "FF", seat: 2, notes: "The concert was outstanding. Led Zepplin blew the roof off! 10/10" },
     { id: 4, type: "festival", name: "Bonnaroo", date: "7/12/2024 - 7/14/2024" }
 ];
+// AUTHOR SUGGESTION
+// Capitalization Function
+// function capitalize(word: string): string {
+//   return word.charAt(0).toUpperCase() + word.slice(1)
+// }
 // Add an Event
 function addEvent(obj) {
     eventDatabase.push(obj);

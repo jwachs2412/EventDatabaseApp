@@ -17,6 +17,12 @@ const eventDatabase: Event[] = [
   { id: 4, type: "festival", name: "Bonnaroo", date: "7/12/2024 - 7/14/2024" }
 ]
 
+// AUTHOR SUGGESTION
+// Capitalization Function
+// function capitalize(word: string): string {
+//   return word.charAt(0).toUpperCase() + word.slice(1)
+// }
+
 // Add an Event
 function addEvent(obj: Event): Event[] {
   eventDatabase.push(obj)
