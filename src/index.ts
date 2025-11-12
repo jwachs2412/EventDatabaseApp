@@ -88,4 +88,23 @@ function viewEvent(id: number): void {
   }
 }
 
+// AUTHOR SUGGESTION - uses nullish coalescing for the ternaries and also uses the capitalize function
+// function viewEvent(id: number): void {
+//   const singleEvent = getEventById(id)
+
+//   if (singleEvent) {
+//     console.log("\nHere is the event you were looking for:\n")
+//     console.log(
+//       `Event Type: ${capitalize(singleEvent.type)}\n` +
+//       `Event: ${capitalize(singleEvent.name)}\n` +
+//       `Date(s): ${singleEvent.date}\n` +
+//       `Seat: ${singleEvent.seat ?? "N/A"}\n` +
+//       `Row: ${singleEvent.row ?? "N/A"}\n` +
+//       `Event Notes: ${singleEvent.notes ?? "N/A"}\n`
+//     )
+//   } else {
+//     console.log(`❌ No event found with ID: ${id}\n`)
+//   }
+// }
+
 viewEvent(2)
