@@ -1,0 +1,23 @@
+{
+  "name": "eventdatabaseapp",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jwachs2412/EventDatabaseApp.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jwachs2412/EventDatabaseApp/issues"
+  },
+  "homepage": "https://github.com/jwachs2412/EventDatabaseApp#readme",
+  "description": "",
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
