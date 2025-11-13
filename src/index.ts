@@ -64,35 +64,40 @@ function viewEventType(events: Event[], type: string): void {
     return
   }
 
-  const eventType = events.filter(event => event.type.toLowerCase() === type.toLowerCase())
-  console.log(`\nFiltering by "${type}"...`)
-  if (type === "concert") {
-    const evenEmoji = "🎵"
-    const oddEmoji = "🎸"
-    eventType.map((event, index) => {
-      const eventEmoji = index % 2 === 0 ? evenEmoji : oddEmoji
-      console.log(`${eventEmoji} ${event.name} -- ${event.date}`)
-    })
-  } else if (type === "sports") {
-    const evenEmoji = "💪"
-    const oddEmoji = "🎽"
-    eventType.map((event, index) => {
-      const eventEmoji = index % 2 === 0 ? evenEmoji : oddEmoji
-      console.log(`${eventEmoji} ${event.name} -- ${event.date}`)
-    })
-  } else if (type === "festival") {
-    const evenEmoji = "🎶✨"
-    const oddEmoji = "🎤🎉"
-    eventType.map((event, index) => {
-      const eventEmoji = index % 2 === 0 ? evenEmoji : oddEmoji
-      console.log(`${eventEmoji} ${event.name} -- ${event.date}`)
-    })
-  } else {
-    eventType.map(event => {
-      console.log(`${event.name} -- ${event.date}`)
-    })
-  }
+  const eventTypes = events.map(event => event.type)
 
+  if (eventTypes.includes(type)) {
+    const eventType = events.filter(event => event.type.toLowerCase() === type.toLowerCase())
+    console.log(`\nFiltering by "${type}"...`)
+    if (type === "concert") {
+      const evenEmoji = "🎵"
+      const oddEmoji = "🎸"
+      eventType.map((event, index) => {
+        const eventEmoji = index % 2 === 0 ? evenEmoji : oddEmoji
+        console.log(`${eventEmoji} ${event.name} -- ${event.date}`)
+      })
+    } else if (type === "sports") {
+      const evenEmoji = "💪"
+      const oddEmoji = "🎽"
+      eventType.map((event, index) => {
+        const eventEmoji = index % 2 === 0 ? evenEmoji : oddEmoji
+        console.log(`${eventEmoji} ${event.name} -- ${event.date}`)
+      })
+    } else if (type === "festival") {
+      const evenEmoji = "🎶✨"
+      const oddEmoji = "🎤🎉"
+      eventType.map((event, index) => {
+        const eventEmoji = index % 2 === 0 ? evenEmoji : oddEmoji
+        console.log(`${eventEmoji} ${event.name} -- ${event.date}`)
+      })
+    } else {
+      eventType.map(event => {
+        console.log(`${event.name} -- ${event.date}`)
+      })
+    }
+  } else {
+    console.log(`\nEvent type "${type}" does not exist.`)
+  }
   // AUTHOR'S SUGGESTION
   //   for (const e of eventType) {
   //     console.log(`${e.name} — ${e.date}`)
