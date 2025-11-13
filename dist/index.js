@@ -40,6 +40,21 @@ function listEvents(events) {
     }
 }
 listEvents(eventDatabase);
+// View Events by Type
+function viewEventType(events, type) {
+    if (events.length === 0) {
+        console.log(`No events found for ${type}`);
+        return;
+    }
+    const eventType = events.filter(event => event.type === type.toLowerCase());
+    console.log(`\nYou are viewing all of your ${type} events:`);
+    console.log(eventType);
+    // AUTHOR'S SUGGESTION
+    //   for (const e of eventType) {
+    //     console.log(`${e.name} — ${e.date}`)
+    //   }
+}
+viewEventType(eventDatabase, "concert");
 // Get Event by ID
 function getEventById(eventId) {
     return eventDatabase.find(event => event.id === eventId);
@@ -54,8 +69,8 @@ function getEventById(eventId) {
 //   }
 //   return foundEvent
 // }
-const event = getEventById(3);
-console.log(event);
+console.log(`\nHere is the event you wanted to view by ID:`);
+console.log(getEventById(3));
 // View Single Event
 function viewEvent(id) {
     const singleEvent = getEventById(id);
