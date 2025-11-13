@@ -43,35 +43,39 @@ listEvents(eventDatabase);
 // View Events by Type
 function viewEventType(events, type) {
     if (events.length === 0) {
-        console.log(`No events found for ${type}`);
+        console.log(`No events found.`);
         return;
     }
     const eventType = events.filter(event => event.type.toLowerCase() === type.toLowerCase());
     console.log(`\nFiltering by "${type}"...`);
     if (type === "concert") {
-        for (const event of eventType) {
-            console.log(`🎸 ${event.name} -- ${event.date}`);
-        }
+        const evenEmoji = "🎵";
+        const oddEmoji = "🎸";
+        eventType.map((event, index) => {
+            const eventEmoji = index % 2 === 0 ? evenEmoji : oddEmoji;
+            console.log(`${eventEmoji} ${event.name} -- ${event.date}`);
+        });
     }
     else if (type === "sports") {
-        for (const event of eventType) {
-            console.log(`💪 ${event.name} -- ${event.date}`);
-        }
+        const evenEmoji = "💪";
+        const oddEmoji = "🎽";
+        eventType.map((event, index) => {
+            const eventEmoji = index % 2 === 0 ? evenEmoji : oddEmoji;
+            console.log(`${eventEmoji} ${event.name} -- ${event.date}`);
+        });
     }
     else if (type === "festival") {
-        for (const event of eventType) {
-            console.log(`🎤🎉 ${event.name} -- ${event.date}`);
-        }
+        const evenEmoji = "🎶✨";
+        const oddEmoji = "🎤🎉";
+        eventType.map((event, index) => {
+            const eventEmoji = index % 2 === 0 ? evenEmoji : oddEmoji;
+            console.log(`${eventEmoji} ${event.name} -- ${event.date}`);
+        });
     }
     else {
-        for (const event of eventType) {
-            if (event.id % 2 === 0) {
-                console.log(`${event.name} -- ${event.date}`);
-            }
-            else {
-                console.log(`${event.name} -- ${event.date}`);
-            }
-        }
+        eventType.map(event => {
+            console.log(`${event.name} -- ${event.date}`);
+        });
     }
     // AUTHOR'S SUGGESTION
     //   for (const e of eventType) {
@@ -79,6 +83,10 @@ function viewEventType(events, type) {
     //   }
 }
 viewEventType(eventDatabase, "concert");
+viewEventType(eventDatabase, "sports");
+viewEventType(eventDatabase, "festival");
+viewEventType(eventDatabase, "theater");
+viewEventType(eventDatabase, "technology");
 // Get Event by ID
 function getEventById(eventId) {
     return eventDatabase.find(event => event.id === eventId);
