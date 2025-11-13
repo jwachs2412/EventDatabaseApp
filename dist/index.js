@@ -47,8 +47,32 @@ function viewEventType(events, type) {
         return;
     }
     const eventType = events.filter(event => event.type.toLowerCase() === type.toLowerCase());
-    console.log(`\nYou are viewing all of your ${type} events:`);
-    console.log(eventType);
+    console.log(`\nFiltering by "${type}"...`);
+    if (type === "concert") {
+        for (const event of eventType) {
+            console.log(`🎸 ${event.name} -- ${event.date}`);
+        }
+    }
+    else if (type === "sports") {
+        for (const event of eventType) {
+            console.log(`💪 ${event.name} -- ${event.date}`);
+        }
+    }
+    else if (type === "festival") {
+        for (const event of eventType) {
+            console.log(`🎤🎉 ${event.name} -- ${event.date}`);
+        }
+    }
+    else {
+        for (const event of eventType) {
+            if (event.id % 2 === 0) {
+                console.log(`${event.name} -- ${event.date}`);
+            }
+            else {
+                console.log(`${event.name} -- ${event.date}`);
+            }
+        }
+    }
     // AUTHOR'S SUGGESTION
     //   for (const e of eventType) {
     //     console.log(`${e.name} — ${e.date}`)
