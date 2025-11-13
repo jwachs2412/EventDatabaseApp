@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 // Event Database Array
 const eventDatabase = [
-    { id: 0, type: "concert", name: "Chris Stapleton", date: "12/12/2018", row: 8, seat: 23, notes: "The concert was outstanding. 10/10" },
-    { id: 1, type: "sports", name: "Cleveland Browns v Pittsburgh Steelers", date: "11/6/1998", notes: "The Browns won 23-14 and played outstanding. 10/10" },
-    { id: 2, type: "concert", name: "Led Zepplin", date: "6/19/1974", row: "FF", seat: 2, notes: "The concert was outstanding. Led Zepplin blew the roof off! 10/10" },
-    { id: 3, type: "festival", name: "Bonnaroo", date: "7/12/2024 - 7/14/2024" }
+    { id: 0, type: { kind: "concert" }, name: "Chris Stapleton", date: "12/12/2018", row: 8, seat: 23, notes: "The concert was outstanding. 10/10" },
+    { id: 1, type: { kind: "sports" }, name: "Cleveland Browns v Pittsburgh Steelers", date: "11/6/1998", notes: "The Browns won 23-14 and played outstanding. 10/10" },
+    { id: 2, type: { kind: "concert" }, name: "Led Zepplin", date: "6/19/1974", row: "FF", seat: 2, notes: "The concert was outstanding. Led Zepplin blew the roof off! 10/10" },
+    { id: 3, type: { kind: "festival", dateRange: ["7/12/2024", "7/14/2024"] }, name: "Bonnaroo" }
 ];
 // AUTHOR SUGGESTION
 // Capitalization Function
@@ -27,16 +27,18 @@ function addEvent(obj) {
 // }
 addEvent({
     id: 4,
-    type: "theater",
+    type: { kind: "theater" },
     name: "Hamilton",
     date: "9/8/2023",
     notes: "Incredible show, worth every penny!"
 });
+// Pretty Prints the Event Database, showing the Date Range
+console.log(JSON.stringify(eventDatabase, null, 2));
 // List All Events
 function listEvents(events) {
     console.log("\nList of All Events You Have Attended:\n");
     for (const currentEvent of events) {
-        console.log(`Event Type: ${currentEvent.type.charAt(0).toUpperCase() + currentEvent.type.slice(1)}\nEvent: ${currentEvent.name.charAt(0).toUpperCase() + currentEvent.name.slice(1)}\nDate(s): ${currentEvent.date}${currentEvent.seat ? `\nSeat: ${currentEvent.seat}` : ""}${currentEvent.row ? `\nRow: ${currentEvent.row}` : ""}${currentEvent.notes ? `\nEvent Notes: ${currentEvent.notes}` : ""}\n`);
+        console.log(`Event Type: ${currentEvent.type.kind.charAt(0).toUpperCase() + currentEvent.type.kind.slice(1)}\nEvent: ${currentEvent.name.charAt(0).toUpperCase() + currentEvent.name.slice(1)}\nDate(s): ${currentEvent.date}${currentEvent.seat ? `\nSeat: ${currentEvent.seat}` : ""}${currentEvent.row ? `\nRow: ${currentEvent.row}` : ""}${currentEvent.notes ? `\nEvent Notes: ${currentEvent.notes}` : ""}\n`);
     }
 }
 listEvents(eventDatabase);
@@ -52,14 +54,9 @@ function getEventSummary(events) {
     const eventTypes = events.map(event => event.type);
     const counts = {};
     for (const event of eventTypes) {
-        if (!event)
+        if (!event.kind)
             continue;
-        if (counts[event]) {
-            counts[event] += 1;
-        }
-        else {
-            counts[event] = 1;
-        }
+        counts[event.kind] = (counts[event.kind] ?? 0) + 1;
     }
     const eventsAttended = Object.keys(counts).map(key => {
         return `${key.charAt(0).toUpperCase() + key.slice(1)}: ${counts[key]}`;
@@ -74,16 +71,16 @@ function getEventSummary(events) {
 }
 getEventSummary(eventDatabase);
 // View Events by Type
-function viewEventType(events, type) {
+function viewEventType(events, kind) {
     if (events.length === 0) {
         console.log(`No events found.`);
         return;
     }
-    const eventTypes = events.map(event => event.type);
-    if (eventTypes.includes(type)) {
-        const eventType = events.filter(event => event.type.toLowerCase() === type.toLowerCase());
-        console.log(`\nFiltering by "${type}"...`);
-        if (type === "concert") {
+    const eventTypes = events.map(event => event.type.kind);
+    if (eventTypes.includes(kind)) {
+        const eventType = events.filter(event => event.type.kind.toLowerCase() === kind.toLowerCase());
+        console.log(`\nFiltering by "${kind}"...`);
+        if (kind === "concert") {
             const evenEmoji = "🎵";
             const oddEmoji = "🎸";
             eventType.map((event, index) => {
@@ -91,7 +88,7 @@ function viewEventType(events, type) {
                 console.log(`${eventEmoji} ${event.name} -- ${event.date}`);
             });
         }
-        else if (type === "sports") {
+        else if (kind === "sports") {
             const evenEmoji = "💪";
             const oddEmoji = "🎽";
             eventType.map((event, index) => {
@@ -99,12 +96,18 @@ function viewEventType(events, type) {
                 console.log(`${eventEmoji} ${event.name} -- ${event.date}`);
             });
         }
-        else if (type === "festival") {
+        else if (kind === "festival") {
             const evenEmoji = "🎶✨";
             const oddEmoji = "🎤🎉";
             eventType.map((event, index) => {
                 const eventEmoji = index % 2 === 0 ? evenEmoji : oddEmoji;
-                console.log(`${eventEmoji} ${event.name} -- ${event.date}`);
+                if (event.type.kind === "festival" && event.type.dateRange) {
+                    const [startDate, endDate] = event.type.dateRange;
+                    console.log(`${eventEmoji} ${event.name} -- ${startDate} - ${endDate}`);
+                }
+                else {
+                    console.log(`${eventEmoji} ${event.name} -- ${event.date}`);
+                }
             });
         }
         else {
@@ -114,7 +117,7 @@ function viewEventType(events, type) {
         }
     }
     else {
-        console.log(`\nEvent type "${type}" does not exist.`);
+        console.log(`\nEvent type "${kind}" does not exist.`);
     }
     // AUTHOR'S SUGGESTION
     //   for (const e of eventType) {
@@ -147,7 +150,7 @@ function viewEvent(id) {
     const singleEvent = getEventById(id);
     if (singleEvent) {
         console.log("\nHere is the event you were looking for:\n");
-        console.log(`Event Type: ${singleEvent.type.charAt(0).toUpperCase() + singleEvent.type.slice(1)}\nEvent: ${singleEvent.name.charAt(0).toUpperCase() + singleEvent.name.slice(1)}\nDate(s): ${singleEvent.date}\nSeat: ${singleEvent.seat ? singleEvent.seat : "N/A"}\nRow: ${singleEvent.row ? singleEvent.row : "N/A"}\nEvent Notes: ${singleEvent.notes ? singleEvent.notes : "N/A"}\n`);
+        console.log(`Event Type: ${singleEvent.type.kind.charAt(0).toUpperCase() + singleEvent.type.kind.slice(1)}\nEvent: ${singleEvent.name.charAt(0).toUpperCase() + singleEvent.name.slice(1)}\nDate(s): ${singleEvent.date}\nSeat: ${singleEvent.seat ? singleEvent.seat : "N/A"}\nRow: ${singleEvent.row ? singleEvent.row : "N/A"}\nEvent Notes: ${singleEvent.notes ? singleEvent.notes : "N/A"}\n`);
     }
     else {
         console.log(`❌ No event found with ID: ${id}\n`);
@@ -194,7 +197,7 @@ function editEvent(id, updates) {
             eventToEdit.notes = updates.notes;
         }
         console.log(`Event id: ${id} has been updated. Here is the updated event database: \n`);
-        console.log(eventDatabase);
+        console.log(JSON.stringify(eventDatabase, null, 2));
     }
     else {
         console.log(`Event id: ${id} was not found.`);
@@ -208,7 +211,7 @@ function deleteEvent(id) {
         const eventRemoved = eventDatabase.splice(index, 1)[0];
         if (eventRemoved) {
             console.log(`\nEvent "${eventRemoved.name}" (ID: ${eventRemoved.id}) deleted successfully.`);
-            console.log(eventDatabase);
+            console.log(JSON.stringify(eventDatabase, null, 2));
         }
     }
     else {
