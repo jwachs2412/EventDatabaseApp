@@ -64,7 +64,7 @@ function viewEventType(events: Event[], type: string): void {
     return
   }
 
-  const eventType = events.filter(event => event.type === type.toLowerCase())
+  const eventType = events.filter(event => event.type.toLowerCase() === type.toLowerCase())
   console.log(`\nYou are viewing all of your ${type} events:`)
   console.log(eventType)
 

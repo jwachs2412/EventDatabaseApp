@@ -46,7 +46,7 @@ function viewEventType(events, type) {
         console.log(`No events found for ${type}`);
         return;
     }
-    const eventType = events.filter(event => event.type === type.toLowerCase());
+    const eventType = events.filter(event => event.type.toLowerCase() === type.toLowerCase());
     console.log(`\nYou are viewing all of your ${type} events:`);
     console.log(eventType);
     // AUTHOR'S SUGGESTION
