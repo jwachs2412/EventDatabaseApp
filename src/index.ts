@@ -51,11 +51,48 @@ addEvent({
 function listEvents(events: Event[]) {
   console.log("\nList of All Events You Have Attended:\n")
   for (const currentEvent of events) {
-    console.log(`Event Type: ${currentEvent.type.charAt(0).toUpperCase() + currentEvent.type.slice(1)}\nEvent: ${currentEvent.name.charAt(0).toUpperCase() + currentEvent.name.slice(1)}\nDate(s): ${currentEvent.date}\nSeat: ${currentEvent.seat ? currentEvent.seat : "N/A"}\nRow: ${currentEvent.row ? currentEvent.row : "N/A"}\nEvent Notes: ${currentEvent.notes ? currentEvent.notes : "N/A"}\n`)
+    console.log(`Event Type: ${currentEvent.type.charAt(0).toUpperCase() + currentEvent.type.slice(1)}\nEvent: ${currentEvent.name.charAt(0).toUpperCase() + currentEvent.name.slice(1)}\nDate(s): ${currentEvent.date}${currentEvent.seat ? `\nSeat: ${currentEvent.seat}` : ""}${currentEvent.row ? `\nRow: ${currentEvent.row}` : ""}${currentEvent.notes ? `\nEvent Notes: ${currentEvent.notes}` : ""}\n`)
   }
 }
 
 listEvents(eventDatabase)
+
+// Get Event Summary
+function getEventSummary(events: Event[]): void {
+  if (events.length === 0) {
+    console.log("There are no events...")
+    return
+  }
+
+  const totalEvents = events.length
+  // Show total number of events attended
+  console.log(`Total Events: ${totalEvents}`)
+
+  const eventTypes = events.map(event => event.type)
+  const counts: { [key: string]: number } = {}
+  for (const event of eventTypes) {
+    if (!event) continue
+
+    if (counts[event]) {
+      counts[event] += 1
+    } else {
+      counts[event] = 1
+    }
+  }
+  const eventsAttended = Object.keys(counts).map(key => {
+    return `${key.charAt(0).toUpperCase() + key.slice(1)}: ${counts[key]}`
+  })
+  const eventsAttendedSummary = eventsAttended.join(" | ")
+  // Show Summary of Events
+  console.log(eventsAttendedSummary)
+
+  const eventNotes = events.filter(event => event.notes)
+  const notesCount = eventNotes.length
+  // Show Number of Events That Contain Notes
+  console.log(`Events with notes: ${notesCount}`)
+}
+
+getEventSummary(eventDatabase)
 
 // View Events by Type
 function viewEventType(events: Event[], type: string): void {
