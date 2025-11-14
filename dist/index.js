@@ -177,6 +177,9 @@ viewEvent(2);
 // Edit Single Event - keeping Partial in there as a helper - makes all Event props optional for update - refactor below function at some point, removing the if statements and replacing with less code
 function editEvent(id, updates) {
     const eventToEdit = getEventById(id);
+    if (!eventToEdit) {
+        console.log(`Event id: ${id} could not be located.`);
+    }
     if (eventToEdit) {
         if (updates.type) {
             eventToEdit.type = updates.type;

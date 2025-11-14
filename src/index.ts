@@ -206,6 +206,10 @@ viewEvent(2)
 function editEvent(id: number, updates: Partial<Event>): void {
   const eventToEdit = getEventById(id)
 
+  if (!eventToEdit) {
+    console.log(`Event id: ${id} could not be located.`)
+  }
+
   if (eventToEdit) {
     if (updates.type) {
       eventToEdit.type = updates.type
