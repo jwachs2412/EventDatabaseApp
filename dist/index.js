@@ -178,49 +178,28 @@ viewEvent(2);
 function editEvent(id, updates) {
     const eventToEdit = getEventById(id);
     if (!eventToEdit) {
-        console.log(`Event id: ${id} could not be located.`);
-    }
-    if (eventToEdit) {
-        if (updates.type) {
-            eventToEdit.type = updates.type;
-        }
-        if (updates.name) {
-            eventToEdit.name = updates.name;
-        }
-        if (updates.date) {
-            eventToEdit.date = updates.date;
-        }
-        if (updates.row) {
-            eventToEdit.row = updates.row;
-        }
-        if (updates.seat) {
-            eventToEdit.seat = updates.seat;
-        }
-        if (updates.notes) {
-            eventToEdit.notes = updates.notes;
-        }
-        console.log(`Event id: ${id} has been updated. Here is the updated event database: \n`);
-        console.log(JSON.stringify(eventDatabase, null, 2));
-    }
-    else {
         console.log(`Event id: ${id} was not found.`);
+        return null;
     }
+    const eventEdited = Object.assign(eventToEdit, updates);
+    console.log(`Event id: ${id} has been updated. Here is the updated event database: \n`);
+    console.log(JSON.stringify(eventDatabase, null, 2));
+    return eventEdited;
 }
-editEvent(1, { notes: "Amazing live performance!", seat: 12 });
+editEvent(1, { notes: "The Browns won by 17! Big win!", seat: 10 });
 // Delete Event
-function deleteEvent(id) {
-    const index = eventDatabase.findIndex(event => event.id === id);
-    if (index >= 0) {
-        const eventRemoved = eventDatabase.splice(index, 1)[0];
-        if (eventRemoved) {
-            console.log(`\nEvent "${eventRemoved.name}" (ID: ${eventRemoved.id}) deleted successfully.`);
-            console.log(JSON.stringify(eventDatabase, null, 2));
-        }
-    }
-    else {
-        console.log(`\nEvent not found.`);
-    }
-}
-deleteEvent(2);
-deleteEvent(10);
+// function deleteEvent(id: number): void {
+//   const index = eventDatabase.findIndex(event => event.id === id)
+//   if (index >= 0) {
+//     const eventRemoved = eventDatabase.splice(index, 1)[0]
+//     if (eventRemoved) {
+//       console.log(`\nEvent "${eventRemoved.name}" (ID: ${eventRemoved.id}) deleted successfully.`)
+//       console.log(JSON.stringify(eventDatabase, null, 2))
+//     }
+//   } else {
+//     console.log(`\nEvent not found.`)
+//   }
+// }
+// deleteEvent(2)
+// deleteEvent(10)
 //# sourceMappingURL=index.js.map
