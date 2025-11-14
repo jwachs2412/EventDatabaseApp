@@ -203,20 +203,23 @@ function viewEvent(id: number): void {
 viewEvent(2)
 
 // Edit Single Event - keeping Partial in there as a helper - makes all Event props optional for update - refactor below function at some point, removing the if statements and replacing with less code
-function editEvent(id: number, updates: Partial<Event>): Event | null {
-  const eventToEdit = getEventById(id)
+function editEvent(eventID: number, updates: Partial<Event>): Event | null {
+  const eventToEdit = getEventById(eventID)
   if (!eventToEdit) {
-    console.log(`Event id: ${id} was not found.`)
+    console.log(`Event id: ${eventID} was not found.`)
     return null
   }
 
-  const eventEdited = Object.assign(eventToEdit, updates)
-  console.log(`Event id: ${id} has been updated. Here is the updated event database: \n`)
+  const { id, ...updatesWithoutID } = updates
+  const eventEdited = Object.assign(eventToEdit, updatesWithoutID)
+  console.log(`Event id: ${eventID} has been updated. Here is the updated event database: \n`)
   console.log(JSON.stringify(eventDatabase, null, 2))
   return eventEdited
 }
 
 editEvent(1, { notes: "The Browns won by 17! Big win!", seat: 10 })
+editEvent(2, { id: 10, notes: "Wowzers!", row: 10, seat: 30 })
+editEvent(10, { notes: "This shouldn't work." })
 
 // Delete Event
 function deleteEvent(id: number): void {
