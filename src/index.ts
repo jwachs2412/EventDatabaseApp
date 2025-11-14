@@ -219,19 +219,19 @@ function editEvent(id: number, updates: Partial<Event>): Event | null {
 editEvent(1, { notes: "The Browns won by 17! Big win!", seat: 10 })
 
 // Delete Event
-// function deleteEvent(id: number): void {
-//   const index = eventDatabase.findIndex(event => event.id === id)
+function deleteEvent(id: number): void {
+  const index = eventDatabase.findIndex(event => event.id === id)
 
-//   if (index >= 0) {
-//     const eventRemoved = eventDatabase.splice(index, 1)[0]
-//     if (eventRemoved) {
-//       console.log(`\nEvent "${eventRemoved.name}" (ID: ${eventRemoved.id}) deleted successfully.`)
-//       console.log(JSON.stringify(eventDatabase, null, 2))
-//     }
-//   } else {
-//     console.log(`\nEvent not found.`)
-//   }
-// }
+  if (index >= 0) {
+    const eventRemoved = eventDatabase.splice(index, 1)[0]
+    if (eventRemoved) {
+      console.log(`\nEvent "${eventRemoved.name}" (ID: ${eventRemoved.id}) deleted successfully.`)
+      console.log(JSON.stringify(eventDatabase, null, 2))
+    }
+  } else {
+    console.log(`\nEvent not found.`)
+  }
+}
 
-// deleteEvent(2)
-// deleteEvent(10)
+deleteEvent(2)
+deleteEvent(10)
