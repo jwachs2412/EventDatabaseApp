@@ -193,15 +193,14 @@ editEvent(10, { notes: "This shouldn't work." });
 // Delete Event
 function deleteEvent(id) {
     const index = eventDatabase.findIndex(event => event.id === id);
-    if (index >= 0) {
-        const eventRemoved = eventDatabase.splice(index, 1)[0];
-        if (eventRemoved) {
-            console.log(`\nEvent "${eventRemoved.name}" (ID: ${eventRemoved.id}) deleted successfully.`);
-            console.log(JSON.stringify(eventDatabase, null, 2));
-        }
-    }
-    else {
+    if (index === -1) {
         console.log(`\nEvent not found.`);
+        return;
+    }
+    const eventRemoved = eventDatabase.splice(index, 1)[0];
+    if (eventRemoved) {
+        console.log(`\nEvent "${eventRemoved.name}" (ID: ${eventRemoved.id}) deleted successfully.`);
+        console.log(JSON.stringify(eventDatabase, null, 2));
     }
 }
 deleteEvent(2);
