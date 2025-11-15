@@ -23,8 +23,16 @@ function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
   return obj[key]
 }
 
-const getType: string = getProperty(eventDatabase[0]!, "name")
+const getName: string = getProperty(eventDatabase[0]!, "name")
+console.log(getName)
+
+const getType = getProperty(eventDatabase[3]!, "type")
 console.log(getType)
+
+if (getType.kind === "festival") {
+  const getDateRange: string[] | undefined = getProperty(getType, "dateRange")
+  console.log(getDateRange)
+}
 
 // AUTHOR SUGGESTION
 // Capitalization Function

@@ -10,8 +10,14 @@ const eventDatabase = [
 function getProperty(obj, key) {
     return obj[key];
 }
-const getType = getProperty(eventDatabase[0], "name");
+const getName = getProperty(eventDatabase[0], "name");
+console.log(getName);
+const getType = getProperty(eventDatabase[3], "type");
 console.log(getType);
+if (getType.kind === "festival") {
+    const getDateRange = getProperty(getType, "dateRange");
+    console.log(getDateRange);
+}
 // AUTHOR SUGGESTION
 // Capitalization Function
 // function capitalize(word: string): string {
