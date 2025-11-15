@@ -7,6 +7,11 @@ const eventDatabase = [
     { id: 2, type: { kind: "concert" }, name: "Led Zepplin", date: "6/19/1974", row: "FF", seat: 2, notes: "The concert was outstanding. Led Zepplin blew the roof off! 10/10" },
     { id: 3, type: { kind: "festival", dateRange: ["7/12/2024", "7/14/2024"] }, name: "Bonnaroo" }
 ];
+function getProperty(obj, key) {
+    return obj[key];
+}
+const getType = getProperty(eventDatabase[0], "name");
+console.log(getType);
 // AUTHOR SUGGESTION
 // Capitalization Function
 // function capitalize(word: string): string {

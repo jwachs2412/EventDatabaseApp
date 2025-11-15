@@ -19,6 +19,13 @@ const eventDatabase: Event[] = [
   { id: 3, type: { kind: "festival", dateRange: ["7/12/2024", "7/14/2024"] }, name: "Bonnaroo" }
 ]
 
+function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+  return obj[key]
+}
+
+const getType: string = getProperty(eventDatabase[0]!, "name")
+console.log(getType)
+
 // AUTHOR SUGGESTION
 // Capitalization Function
 // function capitalize(word: string): string {
