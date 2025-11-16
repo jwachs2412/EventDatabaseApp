@@ -33,7 +33,18 @@ function isValidDate(date) {
 }
 // Add an Event
 function addEvent(obj) {
-    eventDatabase.push(obj);
+    if (obj.date) {
+        const valid = isValidDate(obj.date);
+        if (valid) {
+            eventDatabase.push(obj);
+        }
+        else {
+            console.log("You must enter a valid date (i.e. - mm/dd/yyyy)");
+        }
+    }
+    else {
+        eventDatabase.push(obj);
+    }
     console.log(eventDatabase);
     return eventDatabase;
 }
