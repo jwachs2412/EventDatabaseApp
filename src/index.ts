@@ -1,4 +1,6 @@
-type EventType = { kind: "concert" } | { kind: "festival"; dateRange: [string, string] } | { kind: "sports" } | { kind: string; dateRange?: [string, string] }
+type EventType = { kind: "concert" } | { kind: "festival"; dateRange: [string, string] } | { kind: "sports" }
+
+// type userCreatedEventType = { kind: string }
 
 // Shape of the Event Object
 interface Event {
@@ -19,18 +21,21 @@ const eventDatabase: Event[] = [
   { id: 3, type: { kind: "festival", dateRange: ["7/12/2024", "7/14/2024"] }, name: "Bonnaroo" }
 ]
 
-function getProperty<T, K extends keyof T>(obj: T, key: K): T[K] {
+function getProperty<T extends object, K extends keyof T>(obj: T | undefined, key: K): T[K] | undefined {
+  if (!obj) return undefined
   return obj[key]
 }
 
-const getName: string = getProperty(eventDatabase[0]!, "name")
+const getName: string | undefined = getProperty(eventDatabase[0], "name")
 console.log(getName)
 
-const getType = getProperty(eventDatabase[3]!, "type")
+const getType: EventType | undefined = getProperty(eventDatabase[3], "type")
 console.log(getType)
 
-if (getType.kind === "festival") {
-  const getDateRange: string[] | undefined = getProperty(getType, "dateRange")
+if (getType === undefined) {
+  console.log("Could not find the type of event you're looking for.")
+} else if (getType.kind === "festival") {
+  const getDateRange: [string, string] | undefined = getProperty(getType, "dateRange")
   console.log(getDateRange)
 }
 
@@ -39,6 +44,10 @@ if (getType.kind === "festival") {
 // function capitalize(word: string): string {
 //   return word.charAt(0).toUpperCase() + word.slice(1)
 // }
+
+function isValidDate(date: string): boolean {
+  return !isNaN(Date.parse(date))
+}
 
 // Add an Event
 function addEvent(obj: Event): Event[] {
@@ -58,9 +67,9 @@ function addEvent(obj: Event): Event[] {
 
 addEvent({
   id: 4,
-  type: { kind: "theater" },
-  name: "Hamilton",
-  date: "9/8/2023",
+  type: { kind: "concert" },
+  name: "ZZ Top",
+  date: "9/8/1992",
   notes: "Incredible show, worth every penny!"
 })
 
@@ -110,7 +119,7 @@ function getEventSummary(events: Event[]): void {
 getEventSummary(eventDatabase)
 
 // View Events by Type
-function viewEventType(events: Event[], kind: string): void {
+function viewEventType(events: Event[], kind: "concert" | "sports" | "festival"): void {
   if (events.length === 0) {
     console.log(`No events found.`)
     return
@@ -118,28 +127,24 @@ function viewEventType(events: Event[], kind: string): void {
 
   const eventTypes = events.map(event => event.type.kind)
 
+  const emojis = kind === "concert" ? ["🎵", "🎸"] : kind === "sports" ? ["💪", "🎽"] : ["🎶✨", "🎤🎉"]
+
   if (eventTypes.includes(kind)) {
     const eventType = events.filter(event => event.type.kind.toLowerCase() === kind.toLowerCase())
     console.log(`\nFiltering by "${kind}"...`)
     if (kind === "concert") {
-      const evenEmoji = "🎵"
-      const oddEmoji = "🎸"
-      eventType.map((event, index) => {
-        const eventEmoji = index % 2 === 0 ? evenEmoji : oddEmoji
+      eventType.forEach((event, index) => {
+        const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1]
         console.log(`${eventEmoji} ${event.name} -- ${event.date}`)
       })
     } else if (kind === "sports") {
-      const evenEmoji = "💪"
-      const oddEmoji = "🎽"
-      eventType.map((event, index) => {
-        const eventEmoji = index % 2 === 0 ? evenEmoji : oddEmoji
+      eventType.forEach((event, index) => {
+        const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1]
         console.log(`${eventEmoji} ${event.name} -- ${event.date}`)
       })
     } else if (kind === "festival") {
-      const evenEmoji = "🎶✨"
-      const oddEmoji = "🎤🎉"
-      eventType.map((event, index) => {
-        const eventEmoji = index % 2 === 0 ? evenEmoji : oddEmoji
+      eventType.forEach((event, index) => {
+        const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1]
         if (event.type.kind === "festival" && event.type.dateRange) {
           const [startDate, endDate] = event.type.dateRange
           console.log(`${eventEmoji} ${event.name} -- ${startDate} - ${endDate}`)
@@ -163,8 +168,8 @@ function viewEventType(events: Event[], kind: string): void {
 viewEventType(eventDatabase, "concert")
 viewEventType(eventDatabase, "sports")
 viewEventType(eventDatabase, "festival")
-viewEventType(eventDatabase, "theater")
-viewEventType(eventDatabase, "technology")
+// viewEventType(eventDatabase, "theater")
+// viewEventType(eventDatabase, "technology")
 
 // Get Event by ID
 function getEventById(eventId: number): Event | undefined {
@@ -226,6 +231,9 @@ function editEvent(eventID: number, updates: Partial<Event>): Event | null {
   }
 
   const { id, ...updatesWithoutID } = updates
+  if (updates.type?.kind === "festival" && eventToEdit.type.kind === "festival" && updates.type.dateRange) {
+    eventToEdit.type.dateRange = updates.type.dateRange
+  }
   const eventEdited = Object.assign(eventToEdit, updatesWithoutID)
   console.log(`Event id: ${eventID} has been updated. Here is the updated event database: \n`)
   console.log(JSON.stringify(eventDatabase, null, 2))
