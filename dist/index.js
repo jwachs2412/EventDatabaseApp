@@ -149,9 +149,14 @@ function doesDateExist(e) {
 // Add an Event Async
 async function addEventAsync(obj) {
     await delay(500);
-    doesDateExist(obj);
-    eventDatabase.push(obj);
-    console.log("You successfully added your event.");
+    try {
+        doesDateExist(obj);
+        eventDatabase.push(obj);
+        console.log("You successfully added your event.");
+    }
+    catch (error) {
+        console.log("The event could not be added.", error);
+    }
 }
 // AUTHOR'S SOLUTION - more production ready - understand this before implementing
 // function addEvent(obj: Omit<Event, "id">): Event[] {

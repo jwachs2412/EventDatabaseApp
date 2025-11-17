@@ -181,9 +181,14 @@ function doesDateExist(e: Event): boolean {
 // Add an Event Async
 async function addEventAsync(obj: Event): Promise<void> {
   await delay(500)
-  doesDateExist(obj)
-  eventDatabase.push(obj)
-  console.log("You successfully added your event.")
+
+  try {
+    doesDateExist(obj)
+    eventDatabase.push(obj)
+    console.log("You successfully added your event.")
+  } catch (error) {
+    console.log("The event could not be added.", error)
+  }
 }
 
 // AUTHOR'S SOLUTION - more production ready - understand this before implementing
