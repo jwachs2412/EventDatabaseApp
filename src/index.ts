@@ -79,6 +79,31 @@ async function showSingleEvent(): Promise<void> {
 }
 showSingleEvent()
 
+// Randomly throws error
+function randomFail() {
+  return Math.random() < 0.3
+}
+
+async function fetchEventsWithFailure(): Promise<Event[]> {
+  await delay(500)
+
+  if (!randomFail) {
+    throw new Error("Failed to fetch events.")
+  }
+
+  return eventDatabase
+}
+
+async function test() {
+  try {
+    const result = await fetchEventsWithFailure()
+    console.log("\nSuccess\n", result)
+  } catch (error) {
+    console.log("\nFailed\n", error)
+  }
+}
+test()
+
 // Get property generic function
 function getProperty<T extends object, K extends keyof T>(obj: T | undefined, key: K): T[K] | undefined {
   if (!obj) return undefined
