@@ -13,10 +13,12 @@ function delay(ms) {
         setTimeout(resolve, ms);
     });
 }
+// Fetch all events
 async function fetchEvents() {
     await delay(500);
     return eventDatabase;
 }
+// Show all events in database
 async function showEvents() {
     console.log("Loading events...");
     const allEvents = await fetchEvents();
@@ -24,6 +26,29 @@ async function showEvents() {
     console.log(allEvents);
 }
 showEvents();
+// Fetch event by ID
+async function fetchEventByID(id) {
+    await delay(1000);
+    //   return eventDatabase[id]
+    const event = eventDatabase.find(event => event.id === id);
+    if (!event) {
+        throw new Error(`Event with ID ${id} not found.`);
+    }
+    return event;
+}
+// Show event by ID
+async function showSingleEvent() {
+    console.log("Loading event...");
+    try {
+        const soloEvent = await fetchEventByID(1);
+        console.log("Here is the event you requested: ");
+        console.log(soloEvent);
+    }
+    catch (err) {
+        console.log("Error: ", err.message);
+    }
+}
+showSingleEvent();
 // Get property generic function
 function getProperty(obj, key) {
     if (!obj)
