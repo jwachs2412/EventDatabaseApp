@@ -16,14 +16,23 @@ function delay(ms) {
 // Fetch all events
 async function fetchEvents() {
     await delay(500);
-    return eventDatabase;
+    const events = eventDatabase;
+    if (!events) {
+        throw new Error("No events found in the database");
+    }
+    return events;
 }
 // Show all events in database
 async function showEvents() {
     console.log("Loading events...");
-    const allEvents = await fetchEvents();
-    console.log("Here are the list of events after a 1/2 second wait:");
-    console.log(allEvents);
+    try {
+        const allEvents = await fetchEvents();
+        console.log("Here are the list of events after a 1/2 second wait:");
+        console.log(allEvents);
+    }
+    catch (err) {
+        console.log("Error: ", err.message);
+    }
 }
 showEvents();
 // Fetch event by ID
