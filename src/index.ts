@@ -104,6 +104,21 @@ async function test() {
 }
 test()
 
+// Loading and Error states
+async function listAndDisplayEvents() {
+  console.log("Loading events...")
+
+  try {
+    const result = await fetchEventsWithFailure()
+    console.log("\nFinished loading!\n", result)
+  } catch (error) {
+    console.log("Failed to fetch.", error)
+  }
+  console.log("Done.")
+  //   return eventDatabase
+}
+listAndDisplayEvents()
+
 // Get property generic function
 function getProperty<T extends object, K extends keyof T>(obj: T | undefined, key: K): T[K] | undefined {
   if (!obj) return undefined
