@@ -7,6 +7,24 @@ const eventDatabase = [
     { id: 2, type: { kind: "concert" }, name: "Led Zepplin", date: "6/19/1974", row: "FF", seat: 2, notes: "The concert was outstanding. Led Zepplin blew the roof off! 10/10" },
     { id: 3, type: { kind: "festival", dateRange: ["7/12/2024", "7/14/2024"] }, name: "Bonnaroo" }
 ];
+// Delay function
+function delay(ms) {
+    return new Promise(resolve => {
+        setTimeout(resolve, ms);
+    });
+}
+async function fetchEvents() {
+    await delay(500);
+    return eventDatabase;
+}
+async function showEvents() {
+    console.log("Loading events...");
+    const allEvents = await fetchEvents();
+    console.log("Here are the list of events after a 1/2 second wait:");
+    console.log(allEvents);
+}
+showEvents();
+// Get property generic function
 function getProperty(obj, key) {
     if (!obj)
         return undefined;
@@ -28,6 +46,7 @@ else if (getType.kind === "festival") {
 // function capitalize(word: string): string {
 //   return word.charAt(0).toUpperCase() + word.slice(1)
 // }
+// Is Date Valid
 function isValidDate(date) {
     return !isNaN(Date.parse(date));
 }

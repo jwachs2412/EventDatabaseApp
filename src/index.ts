@@ -21,6 +21,27 @@ const eventDatabase: Event[] = [
   { id: 3, type: { kind: "festival", dateRange: ["7/12/2024", "7/14/2024"] }, name: "Bonnaroo" }
 ]
 
+// Delay function
+function delay(ms: number): Promise<void> {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms)
+  })
+}
+
+async function fetchEvents() {
+  await delay(500)
+  return eventDatabase
+}
+
+async function showEvents() {
+  console.log("Loading events...")
+  const allEvents = await fetchEvents()
+  console.log("Here are the list of events after a 1/2 second wait:")
+  console.log(allEvents)
+}
+showEvents()
+
+// Get property generic function
 function getProperty<T extends object, K extends keyof T>(obj: T | undefined, key: K): T[K] | undefined {
   if (!obj) return undefined
   return obj[key]
@@ -45,6 +66,7 @@ if (getType === undefined) {
 //   return word.charAt(0).toUpperCase() + word.slice(1)
 // }
 
+// Is Date Valid
 function isValidDate(date: string): boolean {
   return !isNaN(Date.parse(date))
 }
