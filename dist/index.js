@@ -120,21 +120,38 @@ function isValidDate(date) {
     return !isNaN(Date.parse(date));
 }
 // Add an Event
-function addEvent(obj) {
-    if (obj.date) {
-        const valid = isValidDate(obj.date);
-        if (valid) {
-            eventDatabase.push(obj);
-        }
-        else {
-            console.log("You must enter a valid date (i.e. - mm/dd/yyyy)");
-        }
+// function addEvent(obj: Event): Event[] {
+//   if (obj.date) {
+//     const valid = isValidDate(obj.date)
+//     if (valid) {
+//       eventDatabase.push(obj)
+//     } else {
+//       console.log("You must enter a valid date (i.e. - mm/dd/yyyy)")
+//     }
+//   } else {
+//     eventDatabase.push(obj)
+//   }
+//   console.log(eventDatabase)
+//   return eventDatabase
+// }
+// Helper function to check if date exists and if so is it valid
+function doesDateExist(e) {
+    if (!e.date)
+        return true;
+    const valid = isValidDate(e.date);
+    if (valid) {
+        return true;
     }
     else {
-        eventDatabase.push(obj);
+        throw new Error("You must enter a valid date (i.e. - mm/dd/yyyy)");
     }
-    console.log(eventDatabase);
-    return eventDatabase;
+}
+// Add an Event Async
+async function addEventAsync(obj) {
+    await delay(500);
+    doesDateExist(obj);
+    eventDatabase.push(obj);
+    console.log("You successfully added your event.");
 }
 // AUTHOR'S SOLUTION - more production ready - understand this before implementing
 // function addEvent(obj: Omit<Event, "id">): Event[] {
@@ -143,7 +160,7 @@ function addEvent(obj) {
 //   console.log(eventDatabase)
 //   return eventDatabase
 // }
-addEvent({
+addEventAsync({
     id: 4,
     type: { kind: "concert" },
     name: "ZZ Top",
