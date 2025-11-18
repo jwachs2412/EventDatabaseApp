@@ -21,6 +21,13 @@ const eventDatabase: Event[] = [
   { id: 3, type: { kind: "festival", dateRange: ["7/12/2024", "7/14/2024"] }, name: "Bonnaroo" }
 ]
 
+// Manually constructed Promise
+function manualEventPromise(id: number): Promise<Event> {
+  return new Promise((resolve, reject) => {
+    console.log("Executor running...")
+  })
+}
+
 // Delay function
 function delay(ms: number): Promise<void> {
   return new Promise(resolve => {
@@ -398,3 +405,10 @@ function deleteEvent(id: number): void {
 
 deleteEvent(2)
 deleteEvent(10)
+
+function testSyncPromiseBehavior() {
+  console.log("Before calling manualEventPromise")
+  manualEventPromise(3)
+  console.log("After calling manualEventPromise")
+}
+testSyncPromiseBehavior()
