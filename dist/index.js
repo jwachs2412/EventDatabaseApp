@@ -7,17 +7,21 @@ const eventDatabase = [
     { id: 2, type: { kind: "concert" }, name: "Led Zepplin", date: "6/19/1974", row: "FF", seat: 2, notes: "The concert was outstanding. Led Zepplin blew the roof off! 10/10" },
     { id: 3, type: { kind: "festival", dateRange: ["7/12/2024", "7/14/2024"] }, name: "Bonnaroo" }
 ];
+// Delay function
+function delay(ms) {
+    return new Promise(resolve => {
+        setTimeout(resolve, ms);
+    });
+}
 // Manually constructed Promise
 function manualEventPromise(id) {
     return new Promise((resolve, reject) => {
         console.log("Executor running...");
     });
 }
-// Delay function
-function delay(ms) {
-    return new Promise(resolve => {
-        setTimeout(resolve, ms);
-    });
+// Promise resolving to a promise
+function resolveToAnotherPromise() {
+    return Promise.resolve(delay(200).then(() => "Inner promise finished!"));
 }
 // // Fetch all events
 // async function fetchEvents(): Promise<Event[]> {
@@ -356,10 +360,12 @@ function deleteEvent(id) {
 }
 deleteEvent(2);
 deleteEvent(10);
+// Practice tests
 function testSyncPromiseBehavior() {
     console.log("Before calling manualEventPromise");
     manualEventPromise(3);
     console.log("After calling manualEventPromise");
 }
 testSyncPromiseBehavior();
+resolveToAnotherPromise().then(v => console.log(v));
 //# sourceMappingURL=index.js.map

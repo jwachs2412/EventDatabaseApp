@@ -21,6 +21,13 @@ const eventDatabase: Event[] = [
   { id: 3, type: { kind: "festival", dateRange: ["7/12/2024", "7/14/2024"] }, name: "Bonnaroo" }
 ]
 
+// Delay function
+function delay(ms: number): Promise<void> {
+  return new Promise(resolve => {
+    setTimeout(resolve, ms)
+  })
+}
+
 // Manually constructed Promise
 function manualEventPromise(id: number): Promise<Event> {
   return new Promise((resolve, reject) => {
@@ -28,11 +35,9 @@ function manualEventPromise(id: number): Promise<Event> {
   })
 }
 
-// Delay function
-function delay(ms: number): Promise<void> {
-  return new Promise(resolve => {
-    setTimeout(resolve, ms)
-  })
+// Promise resolving to a promise
+function resolveToAnotherPromise(): Promise<string> {
+  return Promise.resolve(delay(200).then(() => "Inner promise finished!"))
 }
 
 // // Fetch all events
@@ -414,9 +419,12 @@ function deleteEvent(id: number): void {
 deleteEvent(2)
 deleteEvent(10)
 
+// Practice tests
 function testSyncPromiseBehavior() {
   console.log("Before calling manualEventPromise")
   manualEventPromise(3)
   console.log("After calling manualEventPromise")
 }
 testSyncPromiseBehavior()
+
+resolveToAnotherPromise().then(v => console.log(v))
