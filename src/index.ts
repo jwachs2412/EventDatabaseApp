@@ -63,7 +63,7 @@ function delay(ms: number): Promise<void> {
 // }
 // showEvents()
 
-// // Fetch event by ID
+// // Fetch event by ID - data layer
 async function fetchEventByID(id: number): Promise<Event> {
   await delay(1000)
   //   return eventDatabase[id]
@@ -83,7 +83,7 @@ fetchEventByID(2) // an ID that doesn't exist
   .then(event => console.log("Resolved:", event))
   .catch(err => console.log("Recovered from rejection:", err.message))
 
-// // Show event by ID
+// // Show event by ID - UI/Presentation layer
 async function showSingleEvent(n: number): Promise<void> {
   console.log("Loading event...")
   try {

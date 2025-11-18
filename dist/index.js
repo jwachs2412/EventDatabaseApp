@@ -42,7 +42,7 @@ function delay(ms) {
 //   }
 // }
 // showEvents()
-// // Fetch event by ID
+// // Fetch event by ID - data layer
 async function fetchEventByID(id) {
     await delay(1000);
     //   return eventDatabase[id]
@@ -58,7 +58,7 @@ fetchEventByID(999) // an ID that doesn't exist
 fetchEventByID(2) // an ID that doesn't exist
     .then(event => console.log("Resolved:", event))
     .catch(err => console.log("Recovered from rejection:", err.message));
-// // Show event by ID
+// // Show event by ID - UI/Presentation layer
 async function showSingleEvent(n) {
     console.log("Loading event...");
     try {
