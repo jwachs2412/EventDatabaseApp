@@ -40,33 +40,33 @@ function resolveToAnotherPromise(): Promise<string> {
   return Promise.resolve(delay(200).then(() => "Inner promise finished!"))
 }
 
-// // Fetch all events
-// async function fetchEvents(): Promise<Event[]> {
-//   await delay(500)
+// Fetch all events
+async function fetchEvents(): Promise<Event[]> {
+  await delay(500)
 
-//   const events = eventDatabase
+  const events = eventDatabase
 
-//   if (events.length === 0) {
-//     throw new Error("No events found in the database")
-//   }
+  if (events.length === 0) {
+    throw new Error("No events found in the database")
+  }
 
-//   return events
-// }
+  return events
+}
 
-// // Show all events in database
-// async function showEvents(): Promise<void> {
-//   console.log("Loading events...")
-//   try {
-//     const allEvents = await fetchEvents()
-//     console.log("Here are the list of events after a 1/2 second wait:")
-//     console.log(allEvents)
-//   } catch (err) {
-//     console.log("Error: ", (err as Error).message)
-//   } finally {
-//     console.log("Finished attempting to load all events in the database.")
-//   }
-// }
-// showEvents()
+// Show all events in database
+async function showEvents(): Promise<void> {
+  console.log("Loading events...")
+  try {
+    const allEvents = await fetchEvents()
+    console.log("Here are the list of events after a 1/2 second wait:")
+    console.log(allEvents)
+  } catch (err) {
+    console.log("Error: ", (err as Error).message)
+  } finally {
+    console.log("Finished attempting to load all events in the database.")
+  }
+}
+showEvents()
 
 // // Fetch event by ID - data layer
 async function fetchEventByID(id: number): Promise<Event> {
