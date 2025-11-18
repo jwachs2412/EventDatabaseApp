@@ -17,7 +17,7 @@ function delay(ms) {
 async function fetchEvents() {
     await delay(500);
     const events = eventDatabase;
-    if (!events) {
+    if (events.length === 0) {
         throw new Error("No events found in the database");
     }
     return events;
@@ -33,9 +33,12 @@ async function showEvents() {
     catch (err) {
         console.log("Error: ", err.message);
     }
+    finally {
+        console.log("Finished attempting to load all events in the database.");
+    }
 }
 showEvents();
-// Fetch event by ID
+// // Fetch event by ID
 async function fetchEventByID(id) {
     await delay(1000);
     //   return eventDatabase[id]

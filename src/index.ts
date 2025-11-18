@@ -34,7 +34,7 @@ async function fetchEvents(): Promise<Event[]> {
 
   const events = eventDatabase
 
-  if (!events) {
+  if (events.length === 0) {
     throw new Error("No events found in the database")
   }
 
@@ -50,11 +50,13 @@ async function showEvents(): Promise<void> {
     console.log(allEvents)
   } catch (err) {
     console.log("Error: ", (err as Error).message)
+  } finally {
+    console.log("Finished attempting to load all events in the database.")
   }
 }
 showEvents()
 
-// Fetch event by ID
+// // Fetch event by ID
 async function fetchEventByID(id: number): Promise<Event> {
   await delay(1000)
   //   return eventDatabase[id]
