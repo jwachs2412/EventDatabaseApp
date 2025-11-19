@@ -32,6 +32,15 @@ async function fetchEvents() {
     }
     return events;
 }
+// Fetch events concurrently
+async function fetchEventsConcurrently(ids) {
+    const promises = ids.map(id => fetchEventByID(id));
+    const results = await Promise.all(promises);
+    return results;
+}
+fetchEventsConcurrently([1, 2, 3])
+    .then(events => console.log("Fetched events concurrently: ", events))
+    .catch(err => console.log("Error fetching events", err));
 // Show all events in database
 async function showEvents() {
     console.log("Loading events...");
@@ -61,10 +70,10 @@ async function fetchEventByID(id) {
 fetchEventByID(999) // an ID that doesn't exist
     .then(event => console.log("Resolved:", event))
     .catch(err => console.log("Recovered from rejection:", err.message));
-fetchEventByID(2) // an ID that doesn't exist
+fetchEventByID(2) // an ID that does exist
     .then(event => console.log("Resolved:", event))
     .catch(err => console.log("Recovered from rejection:", err.message));
-// // Show event by ID - UI/Presentation layer
+// Show event by ID - UI/Presentation layer
 async function showSingleEvent(n) {
     console.log("Loading event...");
     try {
