@@ -81,6 +81,15 @@ async function showEvents(): Promise<void> {
 }
 showEvents()
 
+// Get All Events Safely
+async function getAllEventsSafe(ids: number[]) {
+  const promises = ids.map(id => fetchEventByID(id))
+  const results = await Promise.allSettled(promises)
+  return results
+}
+
+getAllEventsSafe([1, 2, 99]).then(console.log)
+
 // // Fetch event by ID - data layer
 async function fetchEventByID(id: number): Promise<Event> {
   await delay(1000)
