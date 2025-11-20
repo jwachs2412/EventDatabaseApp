@@ -40,46 +40,46 @@ function resolveToAnotherPromise(): Promise<string> {
   return Promise.resolve(delay(200).then(() => "Inner promise finished!"))
 }
 
-// // Fetch all events
-// async function fetchEvents(): Promise<Event[]> {
-//   await delay(500)
+// Fetch all events
+async function fetchEvents(): Promise<Event[]> {
+  await delay(500)
 
-//   const events = eventDatabase
+  const events = eventDatabase
 
-//   if (events.length === 0) {
-//     throw new Error("No events found in the database")
-//   }
+  if (events.length === 0) {
+    throw new Error("No events found in the database")
+  }
 
-//   return events
-// }
+  return events
+}
 
-// // Fetch events concurrently
-// async function fetchEventsConcurrently(ids: number[]): Promise<Event[]> {
-//   const promises = ids.map(id => fetchEventByID(id))
+// Fetch events concurrently
+async function fetchEventsConcurrently(ids: number[]): Promise<Event[]> {
+  const promises = ids.map(id => fetchEventByID(id))
 
-//   const results = await Promise.all(promises)
+  const results = await Promise.all(promises)
 
-//   return results
-// }
+  return results
+}
 
-// fetchEventsConcurrently([1, 2, 3])
-//   .then(events => console.log("Fetched events concurrently: ", events))
-//   .catch(err => console.log("Error fetching events", err))
+fetchEventsConcurrently([1, 2, 3])
+  .then(events => console.log("Fetched events concurrently: ", events))
+  .catch(err => console.log("Error fetching events", err))
 
-// // Show all events in database
-// async function showEvents(): Promise<void> {
-//   console.log("Loading events...")
-//   try {
-//     const allEvents = await fetchEvents()
-//     console.log("Here are the list of events after a 1/2 second wait:")
-//     console.log(allEvents)
-//   } catch (err) {
-//     console.log("Error: ", (err as Error).message)
-//   } finally {
-//     console.log("Finished attempting to load all events in the database.")
-//   }
-// }
-// showEvents()
+// Show all events in database
+async function showEvents(): Promise<void> {
+  console.log("Loading events...")
+  try {
+    const allEvents = await fetchEvents()
+    console.log("Here are the list of events after a 1/2 second wait:")
+    console.log(allEvents)
+  } catch (err) {
+    console.log("Error: ", (err as Error).message)
+  } finally {
+    console.log("Finished attempting to load all events in the database.")
+  }
+}
+showEvents()
 
 // Get All Events Safely
 async function getAllEventsSafe(ids: number[]): Promise<{ successes: Event[]; failures: number[] }> {
@@ -107,364 +107,364 @@ async function fetchEventByID(id: number): Promise<Event> {
   return event
 }
 
-// fetchEventByID(999) // an ID that doesn't exist
-//   .then(event => console.log("Resolved:", event))
-//   .catch(err => console.log("Recovered from rejection:", err.message))
+fetchEventByID(999) // an ID that doesn't exist
+  .then(event => console.log("Resolved:", event))
+  .catch(err => console.log("Recovered from rejection:", err.message))
 
-// fetchEventByID(2) // an ID that does exist
-//   .then(event => console.log("Resolved:", event))
-//   .catch(err => console.log("Recovered from rejection:", err.message))
+fetchEventByID(2) // an ID that does exist
+  .then(event => console.log("Resolved:", event))
+  .catch(err => console.log("Recovered from rejection:", err.message))
 
-// // Show event by ID - UI/Presentation layer
-// async function showSingleEvent(n: number): Promise<void> {
-//   console.log("Loading event...")
-//   try {
-//     const soloEvent = await fetchEventByID(n)
-//     console.log("Here is the event you requested: ")
-//     console.log(soloEvent)
-//   } catch (err) {
-//     throw err
-//   }
+// Show event by ID - UI/Presentation layer
+async function showSingleEvent(n: number): Promise<void> {
+  console.log("Loading event...")
+  try {
+    const soloEvent = await fetchEventByID(n)
+    console.log("Here is the event you requested: ")
+    console.log(soloEvent)
+  } catch (err) {
+    throw err
+  }
+}
+showSingleEvent(1)
+
+// Randomly throws error
+function randomFail() {
+  return Math.random() < 0.3
+}
+
+async function fetchEventsWithFailure(): Promise<Event[]> {
+  await delay(500)
+
+  if (!randomFail) {
+    throw new Error("Failed to fetch events.")
+  }
+
+  return eventDatabase
+}
+
+async function test() {
+  try {
+    const result = await fetchEventsWithFailure()
+    console.log("\nSuccess\n", result)
+  } catch (error) {
+    console.log("\nFailed\n", error)
+  }
+}
+test()
+
+// Loading and Error states
+async function listAndDisplayEvents() {
+  console.log("Loading events...")
+
+  try {
+    const result = await fetchEventsWithFailure()
+    console.log("\nFinished loading!\n", result)
+  } catch (error) {
+    console.log("Failed to fetch.", error)
+  }
+  console.log("Done.")
+  //   return eventDatabase
+}
+listAndDisplayEvents()
+
+// Get property generic function
+function getProperty<T extends object, K extends keyof T>(obj: T | undefined, key: K): T[K] | undefined {
+  if (!obj) return undefined
+  return obj[key]
+}
+
+const getName: string | undefined = getProperty(eventDatabase[0], "name")
+console.log(getName)
+
+const getType: EventType | undefined = getProperty(eventDatabase[3], "type")
+console.log(getType)
+
+if (getType === undefined) {
+  console.log("Could not find the type of event you're looking for.")
+} else if (getType.kind === "festival") {
+  const getDateRange: [string, string] | undefined = getProperty(getType, "dateRange")
+  console.log(getDateRange)
+}
+
+// AUTHOR SUGGESTION
+// Capitalization Function
+// function capitalize(word: string): string {
+//   return word.charAt(0).toUpperCase() + word.slice(1)
 // }
-// showSingleEvent(1)
 
-// // Randomly throws error
-// function randomFail() {
-//   return Math.random() < 0.3
-// }
+// Is Date Valid
+function isValidDate(date: string): boolean {
+  return !isNaN(Date.parse(date))
+}
 
-// async function fetchEventsWithFailure(): Promise<Event[]> {
-//   await delay(500)
-
-//   if (!randomFail) {
-//     throw new Error("Failed to fetch events.")
+// Add an Event
+// function addEvent(obj: Event): Event[] {
+//   if (obj.date) {
+//     const valid = isValidDate(obj.date)
+//     if (valid) {
+//       eventDatabase.push(obj)
+//     } else {
+//       console.log("You must enter a valid date (i.e. - mm/dd/yyyy)")
+//     }
+//   } else {
+//     eventDatabase.push(obj)
 //   }
 
+//   console.log(eventDatabase)
 //   return eventDatabase
 // }
 
-// async function test() {
-//   try {
-//     const result = await fetchEventsWithFailure()
-//     console.log("\nSuccess\n", result)
-//   } catch (error) {
-//     console.log("\nFailed\n", error)
-//   }
-// }
-// test()
+// Helper function to check if date exists and if so is it valid
+function doesDateExist(e: Event): boolean {
+  if (!e.date) return true
 
-// // Loading and Error states
-// async function listAndDisplayEvents() {
-//   console.log("Loading events...")
+  const valid = isValidDate(e.date)
+  if (valid) {
+    return true
+  } else {
+    throw new Error("You must enter a valid date (i.e. - mm/dd/yyyy)")
+  }
+}
 
-//   try {
-//     const result = await fetchEventsWithFailure()
-//     console.log("\nFinished loading!\n", result)
-//   } catch (error) {
-//     console.log("Failed to fetch.", error)
-//   }
-//   console.log("Done.")
-//   //   return eventDatabase
-// }
-// listAndDisplayEvents()
+// Add an Event Async
+async function addEventAsync(obj: Event): Promise<void> {
+  await delay(500)
 
-// // Get property generic function
-// function getProperty<T extends object, K extends keyof T>(obj: T | undefined, key: K): T[K] | undefined {
-//   if (!obj) return undefined
-//   return obj[key]
-// }
+  try {
+    doesDateExist(obj)
+    eventDatabase.push(obj)
+    console.log("You successfully added your event.")
+  } catch (error) {
+    console.log("The event could not be added.", error)
+  }
+}
 
-// const getName: string | undefined = getProperty(eventDatabase[0], "name")
-// console.log(getName)
-
-// const getType: EventType | undefined = getProperty(eventDatabase[3], "type")
-// console.log(getType)
-
-// if (getType === undefined) {
-//   console.log("Could not find the type of event you're looking for.")
-// } else if (getType.kind === "festival") {
-//   const getDateRange: [string, string] | undefined = getProperty(getType, "dateRange")
-//   console.log(getDateRange)
+// AUTHOR'S SOLUTION - more production ready - understand this before implementing
+// function addEvent(obj: Omit<Event, "id">): Event[] {
+//   const newId = eventDatabase.length > 0 ? eventDatabase[eventDatabase.length - 1].id + 1 : 1
+//   eventDatabase.push({ id: newId, ...obj })
+//   console.log(eventDatabase)
+//   return eventDatabase
 // }
 
-// // AUTHOR SUGGESTION
-// // Capitalization Function
-// // function capitalize(word: string): string {
-// //   return word.charAt(0).toUpperCase() + word.slice(1)
-// // }
+addEventAsync({
+  id: 4,
+  type: { kind: "concert" },
+  name: "ZZ Top",
+  date: "9/8/1992",
+  notes: "Incredible show, worth every penny!"
+})
 
-// // Is Date Valid
-// function isValidDate(date: string): boolean {
-//   return !isNaN(Date.parse(date))
-// }
+// Pretty Prints the Event Database, showing the Date Range
+console.log(JSON.stringify(eventDatabase, null, 2))
 
-// // Add an Event
-// // function addEvent(obj: Event): Event[] {
-// //   if (obj.date) {
-// //     const valid = isValidDate(obj.date)
-// //     if (valid) {
-// //       eventDatabase.push(obj)
-// //     } else {
-// //       console.log("You must enter a valid date (i.e. - mm/dd/yyyy)")
-// //     }
-// //   } else {
-// //     eventDatabase.push(obj)
-// //   }
+// List All Events
+function listEvents(events: Event[]) {
+  console.log("\nList of All Events You Have Attended:\n")
 
-// //   console.log(eventDatabase)
-// //   return eventDatabase
-// // }
+  for (const currentEvent of events) {
+    console.log(`Event Type: ${currentEvent.type.kind.charAt(0).toUpperCase() + currentEvent.type.kind.slice(1)}\nEvent: ${currentEvent.name.charAt(0).toUpperCase() + currentEvent.name.slice(1)}\nDate(s): ${currentEvent.date}${currentEvent.seat ? `\nSeat: ${currentEvent.seat}` : ""}${currentEvent.row ? `\nRow: ${currentEvent.row}` : ""}${currentEvent.notes ? `\nEvent Notes: ${currentEvent.notes}` : ""}\n`)
+  }
+}
 
-// // Helper function to check if date exists and if so is it valid
-// function doesDateExist(e: Event): boolean {
-//   if (!e.date) return true
+listEvents(eventDatabase)
 
-//   const valid = isValidDate(e.date)
-//   if (valid) {
-//     return true
-//   } else {
-//     throw new Error("You must enter a valid date (i.e. - mm/dd/yyyy)")
-//   }
-// }
+// Get Event Summary
+function getEventSummary(events: Event[]): void {
+  if (events.length === 0) {
+    console.log("There are no events...")
+    return
+  }
 
-// // Add an Event Async
-// async function addEventAsync(obj: Event): Promise<void> {
-//   await delay(500)
+  const totalEvents = events.length
+  // Show total number of events attended
+  console.log(`Total Events: ${totalEvents}`)
 
-//   try {
-//     doesDateExist(obj)
-//     eventDatabase.push(obj)
-//     console.log("You successfully added your event.")
-//   } catch (error) {
-//     console.log("The event could not be added.", error)
-//   }
-// }
+  const eventTypes = events.map(event => event.type)
+  const counts: { [key: string]: number } = {}
+  for (const event of eventTypes) {
+    if (!event.kind) continue
+    counts[event.kind] = (counts[event.kind] ?? 0) + 1
+  }
+  const eventsAttended = Object.keys(counts).map(key => {
+    return `${key.charAt(0).toUpperCase() + key.slice(1)}: ${counts[key]}`
+  })
+  const eventsAttendedSummary = eventsAttended.join(" | ")
+  // Show Summary of Events
+  console.log(eventsAttendedSummary)
 
-// // AUTHOR'S SOLUTION - more production ready - understand this before implementing
-// // function addEvent(obj: Omit<Event, "id">): Event[] {
-// //   const newId = eventDatabase.length > 0 ? eventDatabase[eventDatabase.length - 1].id + 1 : 1
-// //   eventDatabase.push({ id: newId, ...obj })
-// //   console.log(eventDatabase)
-// //   return eventDatabase
-// // }
+  const eventNotes = events.filter(event => event.notes)
+  const notesCount = eventNotes.length
+  // Show Number of Events That Contain Notes
+  console.log(`Events with notes: ${notesCount}`)
+}
 
-// addEventAsync({
-//   id: 4,
-//   type: { kind: "concert" },
-//   name: "ZZ Top",
-//   date: "9/8/1992",
-//   notes: "Incredible show, worth every penny!"
-// })
+getEventSummary(eventDatabase)
 
-// // Pretty Prints the Event Database, showing the Date Range
-// console.log(JSON.stringify(eventDatabase, null, 2))
+// View Events by Type
+function viewEventType(events: Event[], kind: "concert" | "sports" | "festival"): void {
+  if (events.length === 0) {
+    console.log(`No events found.`)
+    return
+  }
 
-// // List All Events
-// function listEvents(events: Event[]) {
-//   console.log("\nList of All Events You Have Attended:\n")
+  const eventTypes = events.map(event => event.type.kind)
 
-//   for (const currentEvent of events) {
-//     console.log(`Event Type: ${currentEvent.type.kind.charAt(0).toUpperCase() + currentEvent.type.kind.slice(1)}\nEvent: ${currentEvent.name.charAt(0).toUpperCase() + currentEvent.name.slice(1)}\nDate(s): ${currentEvent.date}${currentEvent.seat ? `\nSeat: ${currentEvent.seat}` : ""}${currentEvent.row ? `\nRow: ${currentEvent.row}` : ""}${currentEvent.notes ? `\nEvent Notes: ${currentEvent.notes}` : ""}\n`)
-//   }
-// }
+  const emojis = kind === "concert" ? ["🎵", "🎸"] : kind === "sports" ? ["💪", "🎽"] : ["🎶✨", "🎤🎉"]
 
-// listEvents(eventDatabase)
+  if (eventTypes.includes(kind)) {
+    const eventType = events.filter(event => event.type.kind.toLowerCase() === kind.toLowerCase())
+    console.log(`\nFiltering by "${kind}"...`)
+    if (kind === "concert") {
+      eventType.forEach((event, index) => {
+        const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1]
+        console.log(`${eventEmoji} ${event.name} -- ${event.date}`)
+      })
+    } else if (kind === "sports") {
+      eventType.forEach((event, index) => {
+        const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1]
+        console.log(`${eventEmoji} ${event.name} -- ${event.date}`)
+      })
+    } else if (kind === "festival") {
+      eventType.forEach((event, index) => {
+        const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1]
+        if (event.type.kind === "festival" && event.type.dateRange) {
+          const [startDate, endDate] = event.type.dateRange
+          console.log(`${eventEmoji} ${event.name} -- ${startDate} - ${endDate}`)
+        } else {
+          console.log(`${eventEmoji} ${event.name} -- ${event.date}`)
+        }
+      })
+    } else {
+      eventType.map(event => {
+        console.log(`${event.name} -- ${event.date}`)
+      })
+    }
+  } else {
+    console.log(`\nEvent type "${kind}" does not exist.`)
+  }
+  // AUTHOR'S SUGGESTION
+  //   for (const e of eventType) {
+  //     console.log(`${e.name} — ${e.date}`)
+  //   }
+}
+viewEventType(eventDatabase, "concert")
+viewEventType(eventDatabase, "sports")
+viewEventType(eventDatabase, "festival")
+// viewEventType(eventDatabase, "theater")
+// viewEventType(eventDatabase, "technology")
 
-// // Get Event Summary
-// function getEventSummary(events: Event[]): void {
-//   if (events.length === 0) {
-//     console.log("There are no events...")
-//     return
-//   }
+// Get Event by ID
+function getEventById(eventId: number): Event | undefined {
+  return eventDatabase.find(event => event.id === eventId)
+}
 
-//   const totalEvents = events.length
-//   // Show total number of events attended
-//   console.log(`Total Events: ${totalEvents}`)
-
-//   const eventTypes = events.map(event => event.type)
-//   const counts: { [key: string]: number } = {}
-//   for (const event of eventTypes) {
-//     if (!event.kind) continue
-//     counts[event.kind] = (counts[event.kind] ?? 0) + 1
-//   }
-//   const eventsAttended = Object.keys(counts).map(key => {
-//     return `${key.charAt(0).toUpperCase() + key.slice(1)}: ${counts[key]}`
-//   })
-//   const eventsAttendedSummary = eventsAttended.join(" | ")
-//   // Show Summary of Events
-//   console.log(eventsAttendedSummary)
-
-//   const eventNotes = events.filter(event => event.notes)
-//   const notesCount = eventNotes.length
-//   // Show Number of Events That Contain Notes
-//   console.log(`Events with notes: ${notesCount}`)
-// }
-
-// getEventSummary(eventDatabase)
-
-// // View Events by Type
-// function viewEventType(events: Event[], kind: "concert" | "sports" | "festival"): void {
-//   if (events.length === 0) {
-//     console.log(`No events found.`)
-//     return
-//   }
-
-//   const eventTypes = events.map(event => event.type.kind)
-
-//   const emojis = kind === "concert" ? ["🎵", "🎸"] : kind === "sports" ? ["💪", "🎽"] : ["🎶✨", "🎤🎉"]
-
-//   if (eventTypes.includes(kind)) {
-//     const eventType = events.filter(event => event.type.kind.toLowerCase() === kind.toLowerCase())
-//     console.log(`\nFiltering by "${kind}"...`)
-//     if (kind === "concert") {
-//       eventType.forEach((event, index) => {
-//         const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1]
-//         console.log(`${eventEmoji} ${event.name} -- ${event.date}`)
-//       })
-//     } else if (kind === "sports") {
-//       eventType.forEach((event, index) => {
-//         const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1]
-//         console.log(`${eventEmoji} ${event.name} -- ${event.date}`)
-//       })
-//     } else if (kind === "festival") {
-//       eventType.forEach((event, index) => {
-//         const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1]
-//         if (event.type.kind === "festival" && event.type.dateRange) {
-//           const [startDate, endDate] = event.type.dateRange
-//           console.log(`${eventEmoji} ${event.name} -- ${startDate} - ${endDate}`)
-//         } else {
-//           console.log(`${eventEmoji} ${event.name} -- ${event.date}`)
-//         }
-//       })
-//     } else {
-//       eventType.map(event => {
-//         console.log(`${event.name} -- ${event.date}`)
-//       })
-//     }
-//   } else {
-//     console.log(`\nEvent type "${kind}" does not exist.`)
-//   }
-//   // AUTHOR'S SUGGESTION
-//   //   for (const e of eventType) {
-//   //     console.log(`${e.name} — ${e.date}`)
-//   //   }
-// }
-// viewEventType(eventDatabase, "concert")
-// viewEventType(eventDatabase, "sports")
-// viewEventType(eventDatabase, "festival")
-// // viewEventType(eventDatabase, "theater")
-// // viewEventType(eventDatabase, "technology")
-
-// // Get Event by ID
+// AUTHOR'S SOLUTION - this will make it slightly more user-friendly
 // function getEventById(eventId: number): Event | undefined {
-//   return eventDatabase.find(event => event.id === eventId)
+//   const foundEvent = eventDatabase.find(event => event.id === eventId)
+//   if (!foundEvent) {
+//     console.log(`❌ No event found with ID: ${eventId}`)
+//   } else {
+//     console.log(`✅ Found event: ${foundEvent.name}`)
+//   }
+//   return foundEvent
 // }
+console.log(`\nHere is the event you wanted to view by ID:`)
+console.log(getEventById(3))
 
-// // AUTHOR'S SOLUTION - this will make it slightly more user-friendly
-// // function getEventById(eventId: number): Event | undefined {
-// //   const foundEvent = eventDatabase.find(event => event.id === eventId)
-// //   if (!foundEvent) {
-// //     console.log(`❌ No event found with ID: ${eventId}`)
-// //   } else {
-// //     console.log(`✅ Found event: ${foundEvent.name}`)
-// //   }
-// //   return foundEvent
-// // }
-// console.log(`\nHere is the event you wanted to view by ID:`)
-// console.log(getEventById(3))
+// View Single Event
+function viewEvent(id: number): void {
+  const singleEvent = getEventById(id)
 
-// // View Single Event
+  if (singleEvent) {
+    console.log("\nHere is the event you were looking for:\n")
+    console.log(`Event Type: ${singleEvent.type.kind.charAt(0).toUpperCase() + singleEvent.type.kind.slice(1)}\nEvent: ${singleEvent.name.charAt(0).toUpperCase() + singleEvent.name.slice(1)}\nDate(s): ${singleEvent.date}\nSeat: ${singleEvent.seat ? singleEvent.seat : "N/A"}\nRow: ${singleEvent.row ? singleEvent.row : "N/A"}\nEvent Notes: ${singleEvent.notes ? singleEvent.notes : "N/A"}\n`)
+  } else {
+    console.log(`❌ No event found with ID: ${id}\n`)
+  }
+}
+
+// AUTHOR SUGGESTION - uses nullish coalescing for the ternaries and also uses the capitalize function
 // function viewEvent(id: number): void {
 //   const singleEvent = getEventById(id)
 
 //   if (singleEvent) {
 //     console.log("\nHere is the event you were looking for:\n")
-//     console.log(`Event Type: ${singleEvent.type.kind.charAt(0).toUpperCase() + singleEvent.type.kind.slice(1)}\nEvent: ${singleEvent.name.charAt(0).toUpperCase() + singleEvent.name.slice(1)}\nDate(s): ${singleEvent.date}\nSeat: ${singleEvent.seat ? singleEvent.seat : "N/A"}\nRow: ${singleEvent.row ? singleEvent.row : "N/A"}\nEvent Notes: ${singleEvent.notes ? singleEvent.notes : "N/A"}\n`)
+//     console.log(
+//       `Event Type: ${capitalize(singleEvent.type)}\n` +
+//       `Event: ${capitalize(singleEvent.name)}\n` +
+//       `Date(s): ${singleEvent.date}\n` +
+//       `Seat: ${singleEvent.seat ?? "N/A"}\n` +
+//       `Row: ${singleEvent.row ?? "N/A"}\n` +
+//       `Event Notes: ${singleEvent.notes ?? "N/A"}\n`
+//     )
 //   } else {
 //     console.log(`❌ No event found with ID: ${id}\n`)
 //   }
 // }
 
-// // AUTHOR SUGGESTION - uses nullish coalescing for the ternaries and also uses the capitalize function
-// // function viewEvent(id: number): void {
-// //   const singleEvent = getEventById(id)
+viewEvent(2)
 
-// //   if (singleEvent) {
-// //     console.log("\nHere is the event you were looking for:\n")
-// //     console.log(
-// //       `Event Type: ${capitalize(singleEvent.type)}\n` +
-// //       `Event: ${capitalize(singleEvent.name)}\n` +
-// //       `Date(s): ${singleEvent.date}\n` +
-// //       `Seat: ${singleEvent.seat ?? "N/A"}\n` +
-// //       `Row: ${singleEvent.row ?? "N/A"}\n` +
-// //       `Event Notes: ${singleEvent.notes ?? "N/A"}\n`
-// //     )
-// //   } else {
-// //     console.log(`❌ No event found with ID: ${id}\n`)
-// //   }
-// // }
+// Edit Single Event - keeping Partial in there as a helper - makes all Event props optional for update - refactor below function at some point, removing the if statements and replacing with less code
+function editEvent(eventID: number, updates: Partial<Event>): Event | null {
+  const eventToEdit = getEventById(eventID)
+  if (!eventToEdit) {
+    console.log(`Event id: ${eventID} was not found.`)
+    return null
+  }
 
-// viewEvent(2)
+  const { id, ...updatesWithoutID } = updates
+  if (updates.type?.kind === "festival" && eventToEdit.type.kind === "festival" && updates.type.dateRange) {
+    eventToEdit.type.dateRange = updates.type.dateRange
+  }
+  const eventEdited = Object.assign(eventToEdit, updatesWithoutID)
+  console.log(`Event id: ${eventID} has been updated. Here is the updated event database: \n`)
+  console.log(JSON.stringify(eventDatabase, null, 2))
+  return eventEdited
+}
 
-// // Edit Single Event - keeping Partial in there as a helper - makes all Event props optional for update - refactor below function at some point, removing the if statements and replacing with less code
-// function editEvent(eventID: number, updates: Partial<Event>): Event | null {
-//   const eventToEdit = getEventById(eventID)
-//   if (!eventToEdit) {
-//     console.log(`Event id: ${eventID} was not found.`)
-//     return null
-//   }
+editEvent(1, { notes: "The Browns won by 17! Big win!", seat: 10 })
+editEvent(2, { id: 10, notes: "Wowzers!", row: 10, seat: 30 })
+editEvent(10, { notes: "This shouldn't work." })
 
-//   const { id, ...updatesWithoutID } = updates
-//   if (updates.type?.kind === "festival" && eventToEdit.type.kind === "festival" && updates.type.dateRange) {
-//     eventToEdit.type.dateRange = updates.type.dateRange
-//   }
-//   const eventEdited = Object.assign(eventToEdit, updatesWithoutID)
-//   console.log(`Event id: ${eventID} has been updated. Here is the updated event database: \n`)
-//   console.log(JSON.stringify(eventDatabase, null, 2))
-//   return eventEdited
-// }
+// Delete Event
+function deleteEvent(id: number): void {
+  const index = eventDatabase.findIndex(event => event.id === id)
 
-// editEvent(1, { notes: "The Browns won by 17! Big win!", seat: 10 })
-// editEvent(2, { id: 10, notes: "Wowzers!", row: 10, seat: 30 })
-// editEvent(10, { notes: "This shouldn't work." })
+  if (index === -1) {
+    console.log(`\nEvent not found.`)
+    return
+  }
 
-// // Delete Event
-// function deleteEvent(id: number): void {
-//   const index = eventDatabase.findIndex(event => event.id === id)
+  const eventRemoved = eventDatabase.splice(index, 1)[0]
+  if (eventRemoved) {
+    console.log(`\nEvent "${eventRemoved.name}" (ID: ${eventRemoved.id}) deleted successfully.`)
+    console.log(JSON.stringify(eventDatabase, null, 2))
+  }
+}
 
-//   if (index === -1) {
-//     console.log(`\nEvent not found.`)
-//     return
-//   }
+deleteEvent(2)
+deleteEvent(10)
 
-//   const eventRemoved = eventDatabase.splice(index, 1)[0]
-//   if (eventRemoved) {
-//     console.log(`\nEvent "${eventRemoved.name}" (ID: ${eventRemoved.id}) deleted successfully.`)
-//     console.log(JSON.stringify(eventDatabase, null, 2))
-//   }
-// }
+// Practice tests
+function testSyncPromiseBehavior() {
+  console.log("Before calling manualEventPromise")
+  manualEventPromise(3)
+  console.log("After calling manualEventPromise")
+}
+testSyncPromiseBehavior()
 
-// deleteEvent(2)
-// deleteEvent(10)
+resolveToAnotherPromise().then(v => console.log(v))
 
-// // Practice tests
-// function testSyncPromiseBehavior() {
-//   console.log("Before calling manualEventPromise")
-//   manualEventPromise(3)
-//   console.log("After calling manualEventPromise")
-// }
-// testSyncPromiseBehavior()
+// Showcasing map()
+const eventNames = eventDatabase.map(events => events.name)
+console.log(eventNames)
 
-// resolveToAnotherPromise().then(v => console.log(v))
+// Showcasing map() pulling in all event ids to new array
+const eventIDs = eventDatabase.map(events => events.id)
+console.log(eventIDs)
 
-// // Showcasing map()
-// const eventNames = eventDatabase.map(events => events.name)
-// console.log(eventNames)
-
-// // Showcasing map() pulling in all event ids to new array
-// const eventIDs = eventDatabase.map(events => events.id)
-// console.log(eventIDs)
-
-// // Showcasing filter() and finding a string pattern based on an event name
-// const eventNamePattern = eventDatabase.filter(eventName => eventName.name === "Cleveland Browns v Pittsburgh Steelers")
-// console.log(eventNamePattern)
+// Showcasing filter() and finding a string pattern based on an event name
+const eventNamePattern = eventDatabase.filter(eventName => eventName.name === "Cleveland Browns v Pittsburgh Steelers")
+console.log(eventNamePattern)
