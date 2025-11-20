@@ -31,7 +31,9 @@ function delay(ms: number): Promise<void> {
 // Manually constructed Promise
 function manualEventPromise(id: number): Promise<Event> {
   return new Promise((resolve, reject) => {
-    console.log("Executor running...")
+    const event = eventDatabase.find(e => e.id === id)
+    if (event) resolve(event)
+    else reject(new Error(`Event ID: ${id} not found.`))
   })
 }
 
@@ -448,12 +450,18 @@ deleteEvent(2)
 deleteEvent(10)
 
 // Practice tests
-function testSyncPromiseBehavior() {
+async function testSyncPromiseBehavior(id: number): Promise<void> {
   console.log("Before calling manualEventPromise")
-  manualEventPromise(3)
+  try {
+    const event = await manualEventPromise(id)
+    console.log("Resolved event: ", event)
+  } catch (e) {
+    console.log("Error: ", (e as Error).message)
+  }
   console.log("After calling manualEventPromise")
 }
-testSyncPromiseBehavior()
+testSyncPromiseBehavior(3)
+testSyncPromiseBehavior(99)
 
 resolveToAnotherPromise().then(v => console.log(v))
 

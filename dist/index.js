@@ -16,7 +16,11 @@ function delay(ms) {
 // Manually constructed Promise
 function manualEventPromise(id) {
     return new Promise((resolve, reject) => {
-        console.log("Executor running...");
+        const event = eventDatabase.find(e => e.id === id);
+        if (event)
+            resolve(event);
+        else
+            reject(new Error(`Event ID: ${id} not found.`));
     });
 }
 // Promise resolving to a promise
@@ -381,12 +385,19 @@ function deleteEvent(id) {
 deleteEvent(2);
 deleteEvent(10);
 // Practice tests
-function testSyncPromiseBehavior() {
+async function testSyncPromiseBehavior(id) {
     console.log("Before calling manualEventPromise");
-    manualEventPromise(3);
+    try {
+        const event = await manualEventPromise(id);
+        console.log("Resolved event: ", event);
+    }
+    catch (e) {
+        console.log("Error: ", e.message);
+    }
     console.log("After calling manualEventPromise");
 }
-testSyncPromiseBehavior();
+testSyncPromiseBehavior(3);
+testSyncPromiseBehavior(99);
 resolveToAnotherPromise().then(v => console.log(v));
 // Showcasing map()
 const eventNames = eventDatabase.map(events => events.name);
