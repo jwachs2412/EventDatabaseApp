@@ -160,21 +160,6 @@ else if (getType.kind === "festival") {
 function isValidDate(date) {
     return !isNaN(Date.parse(date));
 }
-// Add an Event
-// function addEvent(obj: Event): Event[] {
-//   if (obj.date) {
-//     const valid = isValidDate(obj.date)
-//     if (valid) {
-//       eventDatabase.push(obj)
-//     } else {
-//       console.log("You must enter a valid date (i.e. - mm/dd/yyyy)")
-//     }
-//   } else {
-//     eventDatabase.push(obj)
-//   }
-//   console.log(eventDatabase)
-//   return eventDatabase
-// }
 // Helper function to check if date exists and if so is it valid
 function doesDateExist(e) {
     if (!e.date)
@@ -191,27 +176,28 @@ function doesDateExist(e) {
 async function addEventAsync(obj) {
     await delay(500);
     try {
+        const lastEvent = eventDatabase[eventDatabase.length - 1];
+        const newId = lastEvent ? lastEvent.id + 1 : 1;
         doesDateExist(obj);
-        eventDatabase.push(obj);
+        eventDatabase.push({ id: newId, ...obj });
         console.log("You successfully added your event.");
+        console.log(JSON.stringify(eventDatabase, null, 2));
     }
     catch (error) {
         console.log("The event could not be added.", error);
     }
 }
-// AUTHOR'S SOLUTION - more production ready - understand this before implementing
-// function addEvent(obj: Omit<Event, "id">): Event[] {
-//   const newId = eventDatabase.length > 0 ? eventDatabase[eventDatabase.length - 1].id + 1 : 1
-//   eventDatabase.push({ id: newId, ...obj })
-//   console.log(eventDatabase)
-//   return eventDatabase
-// }
 addEventAsync({
-    id: 4,
     type: { kind: "concert" },
     name: "ZZ Top",
     date: "9/8/1992",
     notes: "Incredible show, worth every penny!"
+});
+addEventAsync({
+    type: { kind: "sports" },
+    name: "Cleveland Guardians v Detroit Tigers",
+    date: "5/15/2017",
+    notes: "Guardians won 10-9"
 });
 // Pretty Prints the Event Database, showing the Date Range
 console.log(JSON.stringify(eventDatabase, null, 2));
