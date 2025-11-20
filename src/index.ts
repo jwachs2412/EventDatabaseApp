@@ -455,3 +455,11 @@ resolveToAnotherPromise().then(v => console.log(v))
 // Showcasing map()
 const eventNames = eventDatabase.map(events => events.name)
 console.log(eventNames)
+
+// Showcasing map() pulling in all event ids to new array
+const eventIDs = eventDatabase.map(events => events.id)
+console.log(eventIDs)
+
+// Showcasing filter() and finding a string pattern based on an event name
+const eventNamePattern = eventDatabase.filter(eventName => eventName.name === "Cleveland Browns v Pittsburgh Steelers")
+console.log(eventNamePattern)
