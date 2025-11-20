@@ -212,11 +212,20 @@ function doesDateExist(e: Omit<Event, "id">): boolean {
   }
 }
 
+function isEventTypeValid(e: Omit<Event, "id">): void {
+  const validEventTypes = ["concert", "sports", "festival"] as const
+
+  if (!validEventTypes.includes(e.type.kind)) {
+    throw new Error("You must enter concert, sports or festival for the type of event.")
+  }
+}
+
 // Add an Event Async
 async function addEventAsync(obj: Omit<Event, "id">): Promise<void> {
   await delay(500)
 
   try {
+    isEventTypeValid(obj)
     const lastEvent = eventDatabase[eventDatabase.length - 1]
     const newId = lastEvent ? lastEvent.id + 1 : 1
     doesDateExist(obj)

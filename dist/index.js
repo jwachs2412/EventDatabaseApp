@@ -172,10 +172,17 @@ function doesDateExist(e) {
         throw new Error("You must enter a valid date (i.e. - mm/dd/yyyy)");
     }
 }
+function isEventTypeValid(e) {
+    const validEventTypes = ["concert", "sports", "festival"];
+    if (!validEventTypes.includes(e.type.kind)) {
+        throw new Error("You must enter concert, sports or festival for the type of event.");
+    }
+}
 // Add an Event Async
 async function addEventAsync(obj) {
     await delay(500);
     try {
+        isEventTypeValid(obj);
         const lastEvent = eventDatabase[eventDatabase.length - 1];
         const newId = lastEvent ? lastEvent.id + 1 : 1;
         doesDateExist(obj);
