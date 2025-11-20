@@ -386,4 +386,7 @@ function testSyncPromiseBehavior() {
 }
 testSyncPromiseBehavior();
 resolveToAnotherPromise().then(v => console.log(v));
+// Showcasing map()
+const eventNames = eventDatabase.map(events => events.name);
+console.log(eventNames);
 //# sourceMappingURL=index.js.map

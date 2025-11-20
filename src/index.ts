@@ -257,6 +257,7 @@ console.log(JSON.stringify(eventDatabase, null, 2))
 // List All Events
 function listEvents(events: Event[]) {
   console.log("\nList of All Events You Have Attended:\n")
+
   for (const currentEvent of events) {
     console.log(`Event Type: ${currentEvent.type.kind.charAt(0).toUpperCase() + currentEvent.type.kind.slice(1)}\nEvent: ${currentEvent.name.charAt(0).toUpperCase() + currentEvent.name.slice(1)}\nDate(s): ${currentEvent.date}${currentEvent.seat ? `\nSeat: ${currentEvent.seat}` : ""}${currentEvent.row ? `\nRow: ${currentEvent.row}` : ""}${currentEvent.notes ? `\nEvent Notes: ${currentEvent.notes}` : ""}\n`)
   }
@@ -450,3 +451,7 @@ function testSyncPromiseBehavior() {
 testSyncPromiseBehavior()
 
 resolveToAnotherPromise().then(v => console.log(v))
+
+// Showcasing map()
+const eventNames = eventDatabase.map(events => events.name)
+console.log(eventNames)
