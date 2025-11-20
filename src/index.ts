@@ -222,6 +222,7 @@ async function addEventAsync(obj: Omit<Event, "id">): Promise<void> {
     doesDateExist(obj)
     eventDatabase.push({ id: newId, ...obj })
     console.log("You successfully added your event.")
+    // Pretty Prints the Event Database, showing the Date Range
     console.log(JSON.stringify(eventDatabase, null, 2))
   } catch (error) {
     console.log("The event could not be added.", error)
@@ -241,9 +242,6 @@ addEventAsync({
   date: "5/15/2017",
   notes: "Guardians won 10-9"
 })
-
-// Pretty Prints the Event Database, showing the Date Range
-console.log(JSON.stringify(eventDatabase, null, 2))
 
 // List All Events
 function listEvents(events: Event[]) {
