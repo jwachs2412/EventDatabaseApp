@@ -3,6 +3,8 @@ type EventType = { kind: "concert" } | { kind: "festival"; dateRange: [string, s
 // Allows for partial updates on EventType
 type EventTypeUpdate = Partial<{ dateRange: [string, string] }>
 
+type Result<T> = { ok: true; data: T } | { ok: false; error: string }
+
 // Shape of the Event Object
 interface Event {
   id: number
@@ -62,7 +64,9 @@ async function fetchEventsConcurrently(ids: number[]): Promise<Event[]> {
 
   const results = await Promise.all(promises)
 
-  return results
+  const events: Event[] = results.filter(e => e.ok).map(d => d.data)
+
+  return events
 }
 
 fetchEventsConcurrently([1, 2, 3])
@@ -87,11 +91,18 @@ showEvents()
 // Get All Events Safely
 async function getAllEventsSafe(ids: number[]): Promise<{ successes: Event[]; failures: number[] }> {
   const promises = ids.map(id => fetchEventByID(id))
-  const results = await Promise.allSettled(promises)
+  const results = await Promise.all(promises)
 
-  const successes: Event[] = results.filter(result => result.status === "fulfilled").map(result => (result as PromiseFulfilledResult<Event>).value)
+  const successes: Event[] = []
+  const failures: number[] = []
 
-  const failures: number[] = results.map((result, index) => (result.status === "rejected" ? ids[index] : undefined)).filter((id): id is number => id !== undefined)
+  results.forEach((result, index) => {
+    if (result.ok) {
+      successes.push(result.data)
+    } else if (ids[index] !== undefined) {
+      failures.push(ids[index])
+    }
+  })
 
   return { successes, failures }
 }
@@ -99,24 +110,33 @@ async function getAllEventsSafe(ids: number[]): Promise<{ successes: Event[]; fa
 getAllEventsSafe([1, 2, 99]).then(console.log)
 
 // Fetch event by ID - data layer
-async function fetchEventByID(id: number): Promise<Event> {
-  await delay(1000)
+async function fetchEventByID(id: number): Promise<Result<Event>> {
+  await delay(300)
   //   return eventDatabase[id]
   const event = eventDatabase.find(event => event.id === id)
   if (!event) {
-    throw new Error(`Event with ID ${id} not found.`)
+    return { ok: false, error: `No event found with ID: ${id}` }
   }
-
-  return event
+  return { ok: true, data: event }
 }
 
 fetchEventByID(999) // an ID that doesn't exist
-  .then(event => console.log("Resolved:", event))
-  .catch(err => console.log("Recovered from rejection:", err.message))
+  .then(result => {
+    if (result.ok) {
+      console.log("Resolved: ", result.data)
+    } else {
+      console.log("Recovered from rejection: ", result.error)
+    }
+  })
 
 fetchEventByID(2) // an ID that does exist
-  .then(event => console.log("Resolved:", event))
-  .catch(err => console.log("Recovered from rejection:", err.message))
+  .then(result => {
+    if (result.ok) {
+      console.log("Resolved: ", result.data)
+    } else {
+      console.log("Recovered from rejection: ", result.error)
+    }
+  })
 
 // Show event by ID - UI/Presentation layer
 async function showSingleEvent(n: number): Promise<void> {
