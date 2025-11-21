@@ -1,6 +1,7 @@
 type EventType = { kind: "concert" } | { kind: "festival"; dateRange: [string, string] } | { kind: "sports" }
 
-// type userCreatedEventType = { kind: string }
+// Allows for partial updates on EventType
+type EventTypeUpdate = Partial<{ dateRange: [string, string] }>
 
 // Shape of the Event Object
 interface Event {
@@ -401,25 +402,32 @@ function viewEvent(id: number): void {
 viewEvent(2)
 
 // Edit Single Event - keeping Partial in there as a helper - makes all Event props optional for update - refactor below function at some point, removing the if statements and replacing with less code
-function editEvent(eventID: number, updates: Partial<Event>): Event | null {
+function editEvent(eventID: number, updates: Omit<Partial<Event>, "type"> & { type?: EventTypeUpdate }): Event | null {
   const eventToEdit = getEventById(eventID)
   if (!eventToEdit) {
     console.log(`Event id: ${eventID} was not found.`)
     return null
   }
 
-  const { id, ...updatesWithoutID } = updates
-  if (updates.type?.kind === "festival" && eventToEdit.type.kind === "festival" && updates.type.dateRange) {
-    eventToEdit.type.dateRange = updates.type.dateRange
+  const { type: typeUpdates, id: _ignore, ...updatesWithoutID } = updates
+
+  Object.assign(eventToEdit, updatesWithoutID)
+
+  // Update type fields safely
+  if (typeUpdates && eventToEdit.type.kind === "festival" && typeUpdates.dateRange) {
+    eventToEdit.type.dateRange = typeUpdates.dateRange
   }
-  const eventEdited = Object.assign(eventToEdit, updatesWithoutID)
+
   console.log(`Event id: ${eventID} has been updated. Here is the updated event database: \n`)
   console.log(JSON.stringify(eventDatabase, null, 2))
-  return eventEdited
+  return eventToEdit
 }
 
 editEvent(1, { notes: "The Browns won by 17! Big win!", seat: 10 })
 editEvent(2, { id: 10, notes: "Wowzers!", row: 10, seat: 30 })
+editEvent(3, {
+  type: { dateRange: ["2025-01-01", "2025-01-03"] }
+})
 editEvent(10, { notes: "This shouldn't work." })
 
 // Delete Event

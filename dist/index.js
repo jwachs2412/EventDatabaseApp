@@ -350,17 +350,21 @@ function editEvent(eventID, updates) {
         console.log(`Event id: ${eventID} was not found.`);
         return null;
     }
-    const { id, ...updatesWithoutID } = updates;
-    if (updates.type?.kind === "festival" && eventToEdit.type.kind === "festival" && updates.type.dateRange) {
-        eventToEdit.type.dateRange = updates.type.dateRange;
+    const { type: typeUpdates, id: _ignore, ...updatesWithoutID } = updates;
+    Object.assign(eventToEdit, updatesWithoutID);
+    // Update type fields safely
+    if (typeUpdates && eventToEdit.type.kind === "festival" && typeUpdates.dateRange) {
+        eventToEdit.type.dateRange = typeUpdates.dateRange;
     }
-    const eventEdited = Object.assign(eventToEdit, updatesWithoutID);
     console.log(`Event id: ${eventID} has been updated. Here is the updated event database: \n`);
     console.log(JSON.stringify(eventDatabase, null, 2));
-    return eventEdited;
+    return eventToEdit;
 }
 editEvent(1, { notes: "The Browns won by 17! Big win!", seat: 10 });
 editEvent(2, { id: 10, notes: "Wowzers!", row: 10, seat: 30 });
+editEvent(3, {
+    type: { dateRange: ["2025-01-01", "2025-01-03"] }
+});
 editEvent(10, { notes: "This shouldn't work." });
 // Delete Event
 function deleteEvent(id) {
