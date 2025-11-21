@@ -45,7 +45,7 @@ function resolveToAnotherPromise(): Promise<string> {
   return Promise.resolve(delay(200).then(() => "Inner promise finished!"))
 }
 
-// Fetch all events
+// Fetch all events; used in showEvents() function
 async function fetchEventsFromDB(): Promise<Event[]> {
   await delay(500)
 
@@ -57,6 +57,25 @@ async function fetchEventsFromDB(): Promise<Event[]> {
 
   return events
 }
+
+// Sort events
+function sortEventsByName(sortDirection: "asc" | "desc"): Event[] {
+  const allEvents = eventDatabase
+
+  if (allEvents.length === 0) {
+    throw new Error("No events found.")
+  }
+  allEvents.sort((a, b) => a.name.localeCompare(b.name))
+
+  if (sortDirection === "desc") {
+    allEvents.reverse()
+  }
+
+  return allEvents
+}
+
+console.log(sortEventsByName("asc"))
+console.log(sortEventsByName("desc"))
 
 // Fetch events concurrently
 async function fetchEventsConcurrently(ids: number[]): Promise<Event[]> {
@@ -486,7 +505,7 @@ testSyncPromiseBehavior(99)
 resolveToAnotherPromise().then(v => console.log(v))
 
 // Showcasing map()
-const eventNames = eventDatabase.map(events => events.name)
+const eventNames = eventDatabase.map(event => event.name)
 console.log(eventNames)
 
 // Showcasing map() pulling in all event ids to new array
