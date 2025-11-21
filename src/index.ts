@@ -44,7 +44,7 @@ function resolveToAnotherPromise(): Promise<string> {
 }
 
 // Fetch all events
-async function fetchEvents(): Promise<Event[]> {
+async function fetchEventsFromDB(): Promise<Event[]> {
   await delay(500)
 
   const events = eventDatabase
@@ -73,7 +73,7 @@ fetchEventsConcurrently([1, 2, 3])
 async function showEvents(): Promise<void> {
   console.log("Loading events...")
   try {
-    const allEvents = await fetchEvents()
+    const allEvents = await fetchEventsFromDB()
     console.log("Here are the list of events after a 1/2 second wait:")
     console.log(allEvents)
   } catch (err) {

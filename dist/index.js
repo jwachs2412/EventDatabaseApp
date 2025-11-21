@@ -28,7 +28,7 @@ function resolveToAnotherPromise() {
     return Promise.resolve(delay(200).then(() => "Inner promise finished!"));
 }
 // Fetch all events
-async function fetchEvents() {
+async function fetchEventsFromDB() {
     await delay(500);
     const events = eventDatabase;
     if (events.length === 0) {
@@ -49,7 +49,7 @@ fetchEventsConcurrently([1, 2, 3])
 async function showEvents() {
     console.log("Loading events...");
     try {
-        const allEvents = await fetchEvents();
+        const allEvents = await fetchEventsFromDB();
         console.log("Here are the list of events after a 1/2 second wait:");
         console.log(allEvents);
     }
