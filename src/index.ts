@@ -77,21 +77,6 @@ function sortEventsByName(sortDirection: "asc" | "desc"): Event[] {
 console.log(sortEventsByName("asc"))
 console.log(sortEventsByName("desc"))
 
-// Fetch events concurrently
-async function fetchEventsConcurrently(ids: number[]): Promise<Event[]> {
-  const promises = ids.map(id => fetchEventByID(id))
-
-  const results = await Promise.all(promises)
-
-  const events: Event[] = results.filter(e => e.ok).map(d => d.data)
-
-  return events
-}
-
-fetchEventsConcurrently([1, 2, 3])
-  .then(events => console.log("Fetched events concurrently: ", events))
-  .catch(err => console.log("Error fetching events", err))
-
 // Show all events in database
 async function showEvents(): Promise<void> {
   console.log("Loading events...")
@@ -106,6 +91,21 @@ async function showEvents(): Promise<void> {
   }
 }
 showEvents()
+
+// Fetch events concurrently
+async function fetchEventsConcurrently(ids: number[]): Promise<Event[]> {
+  const promises = ids.map(id => fetchEventByID(id))
+
+  const results = await Promise.all(promises)
+
+  const events: Event[] = results.filter((r): r is { ok: true; data: Event } => r.ok).map(r => r.data)
+
+  return events
+}
+
+fetchEventsConcurrently([1, 2, 3])
+  .then(events => console.log("Fetched events concurrently: ", events))
+  .catch(err => console.log("Error fetching events", err))
 
 // Get All Events Safely
 async function getAllEventsSafe(ids: number[]): Promise<{ successes: Event[]; failures: number[] }> {

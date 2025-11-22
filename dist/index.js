@@ -50,16 +50,6 @@ function sortEventsByName(sortDirection) {
 }
 console.log(sortEventsByName("asc"));
 console.log(sortEventsByName("desc"));
-// Fetch events concurrently
-async function fetchEventsConcurrently(ids) {
-    const promises = ids.map(id => fetchEventByID(id));
-    const results = await Promise.all(promises);
-    const events = results.filter(e => e.ok).map(d => d.data);
-    return events;
-}
-fetchEventsConcurrently([1, 2, 3])
-    .then(events => console.log("Fetched events concurrently: ", events))
-    .catch(err => console.log("Error fetching events", err));
 // Show all events in database
 async function showEvents() {
     console.log("Loading events...");
@@ -76,6 +66,16 @@ async function showEvents() {
     }
 }
 showEvents();
+// Fetch events concurrently
+async function fetchEventsConcurrently(ids) {
+    const promises = ids.map(id => fetchEventByID(id));
+    const results = await Promise.all(promises);
+    const events = results.filter((r) => r.ok).map(r => r.data);
+    return events;
+}
+fetchEventsConcurrently([1, 2, 3])
+    .then(events => console.log("Fetched events concurrently: ", events))
+    .catch(err => console.log("Error fetching events", err));
 // Get All Events Safely
 async function getAllEventsSafe(ids) {
     const promises = ids.map(id => fetchEventByID(id));
