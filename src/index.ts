@@ -98,6 +98,7 @@ async function fetchEventsConcurrently(ids: number[]): Promise<Event[]> {
 
   const results = await Promise.all(promises)
 
+  // Custom Type Predicate - a function that acts as a user-defined type guard - parameterName is TypeName
   const events: Event[] = results.filter((r): r is { ok: true; data: Event } => r.ok).map(r => r.data)
 
   return events
