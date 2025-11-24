@@ -441,12 +441,20 @@ function viewEvent(id: number): void {
 
 viewEvent(2)
 
+// Helper function for applying dateRange updates
+function applyTypeUpdates(event: Event, updates?: EventTypeUpdate): void {
+  if (!updates) return
+
+  if (event.type.kind === "festival" && updates.dateRange) {
+    event.type.dateRange = updates.dateRange
+  }
+}
+
 // Edit Single Event - keeping Partial in there as a helper - makes all Event props optional for update - refactor below function at some point, removing the if statements and replacing with less code
-function editEvent(eventID: number, updates: Omit<Partial<Event>, "type"> & { type?: EventTypeUpdate }): Event | null {
+function editEvent(eventID: number, updates: Omit<Partial<Event>, "type"> & { type?: EventTypeUpdate }): Result<Event> {
   const eventToEdit = getEventById(eventID)
   if (!eventToEdit) {
-    console.log(`Event id: ${eventID} was not found.`)
-    return null
+    return { ok: false, error: `Event id: ${eventID} was not found.` }
   }
 
   const { type: typeUpdates, id: _ignore, ...updatesWithoutID } = updates
@@ -454,13 +462,11 @@ function editEvent(eventID: number, updates: Omit<Partial<Event>, "type"> & { ty
   Object.assign(eventToEdit, updatesWithoutID)
 
   // Update type fields safely
-  if (typeUpdates && eventToEdit.type.kind === "festival" && typeUpdates.dateRange) {
-    eventToEdit.type.dateRange = typeUpdates.dateRange
-  }
+  applyTypeUpdates(eventToEdit, typeUpdates)
 
   console.log(`Event id: ${eventID} has been updated. Here is the updated event database: \n`)
   console.log(JSON.stringify(eventDatabase, null, 2))
-  return eventToEdit
+  return { ok: true, data: eventToEdit }
 }
 
 editEvent(1, { notes: "The Browns won by 17! Big win!", seat: 10 })
