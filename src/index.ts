@@ -230,12 +230,6 @@ if (getType === undefined) {
   console.log(getDateRange)
 }
 
-// AUTHOR SUGGESTION
-// Capitalization Function
-// function capitalize(word: string): string {
-//   return word.charAt(0).toUpperCase() + word.slice(1)
-// }
-
 // Is Date Valid
 function isValidDate(date: string): boolean {
   return !isNaN(Date.parse(date))
@@ -252,15 +246,6 @@ function doesDateExist(e: Omit<Event, "id">): boolean {
     throw new Error("You must enter a valid date (i.e. - mm/dd/yyyy)")
   }
 }
-
-// Don't really need this as the check is already done up top
-// function isEventTypeValid(e: Omit<Event, "id">): void {
-//   const validEventTypes = ["concert", "sports", "festival"] as const
-
-//   if (!validEventTypes.includes(e.type.kind)) {
-//     throw new Error("You must enter concert, sports or festival for the type of event.")
-//   }
-// }
 
 // Add an Event Async
 async function addEventAsync(obj: Omit<Event, "id">): Promise<void> {
@@ -395,16 +380,6 @@ function getEventById(eventId: number): Event | undefined {
   return eventDatabase.find(event => event.id === eventId)
 }
 
-// AUTHOR'S SOLUTION - this will make it slightly more user-friendly
-// function getEventById(eventId: number): Event | undefined {
-//   const foundEvent = eventDatabase.find(event => event.id === eventId)
-//   if (!foundEvent) {
-//     console.log(`❌ No event found with ID: ${eventId}`)
-//   } else {
-//     console.log(`✅ Found event: ${foundEvent.name}`)
-//   }
-//   return foundEvent
-// }
 console.log(`\nHere is the event you wanted to view by ID:`)
 console.log(getEventById(3))
 
@@ -419,25 +394,6 @@ function viewEvent(id: number): void {
     console.log(`❌ No event found with ID: ${id}\n`)
   }
 }
-
-// AUTHOR SUGGESTION - uses nullish coalescing for the ternaries and also uses the capitalize function
-// function viewEvent(id: number): void {
-//   const singleEvent = getEventById(id)
-
-//   if (singleEvent) {
-//     console.log("\nHere is the event you were looking for:\n")
-//     console.log(
-//       `Event Type: ${capitalize(singleEvent.type)}\n` +
-//       `Event: ${capitalize(singleEvent.name)}\n` +
-//       `Date(s): ${singleEvent.date}\n` +
-//       `Seat: ${singleEvent.seat ?? "N/A"}\n` +
-//       `Row: ${singleEvent.row ?? "N/A"}\n` +
-//       `Event Notes: ${singleEvent.notes ?? "N/A"}\n`
-//     )
-//   } else {
-//     console.log(`❌ No event found with ID: ${id}\n`)
-//   }
-// }
 
 viewEvent(2)
 
