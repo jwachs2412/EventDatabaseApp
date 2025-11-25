@@ -42,10 +42,26 @@ function manualEventPromise(id: number): Promise<Event> {
   })
 }
 
+// Practice tests
+async function testSyncPromiseBehavior(id: number): Promise<void> {
+  console.log("Before calling manualEventPromise")
+  try {
+    const event = await manualEventPromise(id)
+    console.log("Resolved event: ", event)
+  } catch (e) {
+    console.log("Error: ", (e as Error).message)
+  }
+  console.log("After calling manualEventPromise")
+}
+testSyncPromiseBehavior(3)
+testSyncPromiseBehavior(99)
+
 // Promise resolving to a promise
 function resolveToAnotherPromise(): Promise<string> {
   return Promise.resolve(delay(200).then(() => "Inner promise finished!"))
 }
+
+resolveToAnotherPromise().then(v => console.log(v))
 
 // Fetch all events; used in showEvents() function
 async function fetchEventsFromDB(): Promise<Event[]> {
@@ -397,7 +413,7 @@ function viewEvent(id: number): void {
 
 viewEvent(2)
 
-// Helper function for applying dateRange updates
+// Helper function for applying dateRange updates; helps avoid runtime errors
 function applyTypeUpdates(event: Event, updates?: EventTypeUpdate): void {
   if (!updates) return
 
@@ -451,22 +467,6 @@ function deleteEvent(id: number): void {
 deleteEvent(0)
 deleteEvent(2)
 deleteEvent(10)
-
-// Practice tests
-async function testSyncPromiseBehavior(id: number): Promise<void> {
-  console.log("Before calling manualEventPromise")
-  try {
-    const event = await manualEventPromise(id)
-    console.log("Resolved event: ", event)
-  } catch (e) {
-    console.log("Error: ", (e as Error).message)
-  }
-  console.log("After calling manualEventPromise")
-}
-testSyncPromiseBehavior(3)
-testSyncPromiseBehavior(99)
-
-resolveToAnotherPromise().then(v => console.log(v))
 
 // Showcasing map()
 const eventNames = eventDatabase.map(event => event.name)
