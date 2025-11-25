@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 // Event Database Array
 const eventDatabase = [
-    { id: 0, type: { kind: "concert" }, name: "Chris Stapleton", date: "12/12/2018", row: 8, seat: 23, notes: "The concert was outstanding. 10/10" },
-    { id: 1, type: { kind: "sports" }, name: "Cleveland Browns v Pittsburgh Steelers", date: "11/6/1998", notes: "The Browns won 23-14 and played outstanding. 10/10" },
-    { id: 2, type: { kind: "concert" }, name: "Led Zepplin", date: "6/19/1974", row: "FF", seat: 2, notes: "The concert was outstanding. Led Zepplin blew the roof off! 10/10" },
-    { id: 3, type: { kind: "festival", dateRange: ["7/12/2024", "7/14/2024"] }, name: "Bonnaroo" }
+    { id: 1, type: { kind: "concert" }, name: "Chris Stapleton", date: "12/12/2018", row: 8, seat: 23, notes: "The concert was outstanding. 10/10" },
+    { id: 2, type: { kind: "sports" }, name: "Cleveland Browns v Pittsburgh Steelers", date: "11/6/1998", notes: "The Browns won 23-14 and played outstanding. 10/10" },
+    { id: 3, type: { kind: "concert" }, name: "Led Zepplin", date: "6/19/1974", row: "FF", seat: 2, notes: "The concert was outstanding. Led Zepplin blew the roof off! 10/10" },
+    { id: 4, type: { kind: "festival", dateRange: ["7/12/2024", "7/14/2024"] }, name: "Bonnaroo" }
 ];
 // Delay function
 function delay(ms) {
@@ -42,6 +42,7 @@ function sortEventsByName(sortDirection) {
     if (allEvents.length === 0) {
         throw new Error("No events found.");
     }
+    // function should return negative number (a before b), 0 (a equals b), positive number (a comes after b); localeCompare - string method that compares 2 strings according to alphabetical order
     allEvents.sort((a, b) => a.name.localeCompare(b.name));
     if (sortDirection === "desc") {
         allEvents.reverse();
@@ -50,7 +51,7 @@ function sortEventsByName(sortDirection) {
 }
 console.log(sortEventsByName("asc"));
 console.log(sortEventsByName("desc"));
-// Show all events in database
+// Show all events in database; combines async fetching with try/catch/finally - good because readability, error safety, reliable thanks to finally, easily maintainable
 async function showEvents() {
     console.log("Loading events...");
     try {
@@ -312,10 +313,6 @@ function viewEventType(events, kind) {
     else {
         console.log(`\nEvent type "${kind}" does not exist.`);
     }
-    // AUTHOR'S SUGGESTION
-    //   for (const e of eventType) {
-    //     console.log(`${e.name} — ${e.date}`)
-    //   }
 }
 viewEventType(eventDatabase, "concert");
 viewEventType(eventDatabase, "sports");
@@ -381,6 +378,7 @@ function deleteEvent(id) {
         console.log(JSON.stringify(eventDatabase, null, 2));
     }
 }
+deleteEvent(0);
 deleteEvent(2);
 deleteEvent(10);
 // Practice tests
