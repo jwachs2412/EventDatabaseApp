@@ -55,14 +55,14 @@ async function fetchEventsFromDB() {
 function sortEventsByName(sortDirection) {
     const allEvents = eventDatabase;
     if (allEvents.length === 0) {
-        throw new Error("No events found.");
+        return { ok: false, error: `No events found` };
     }
     // function should return negative number (a before b), 0 (a equals b), positive number (a comes after b); localeCompare - string method that compares 2 strings according to alphabetical order
     allEvents.sort((a, b) => a.name.localeCompare(b.name));
     if (sortDirection === "desc") {
         allEvents.reverse();
     }
-    return allEvents;
+    return { ok: true, data: allEvents };
 }
 console.log(sortEventsByName("asc"));
 console.log(sortEventsByName("desc"));

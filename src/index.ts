@@ -77,11 +77,11 @@ async function fetchEventsFromDB(): Promise<Event[]> {
 }
 
 // Sort events
-function sortEventsByName(sortDirection: "asc" | "desc"): Event[] {
+function sortEventsByName(sortDirection: "asc" | "desc"): Result<Event[]> {
   const allEvents = eventDatabase
 
   if (allEvents.length === 0) {
-    throw new Error("No events found.")
+    return { ok: false, error: `No events found` }
   }
 
   // function should return negative number (a before b), 0 (a equals b), positive number (a comes after b); localeCompare - string method that compares 2 strings according to alphabetical order
@@ -91,7 +91,7 @@ function sortEventsByName(sortDirection: "asc" | "desc"): Event[] {
     allEvents.reverse()
   }
 
-  return allEvents
+  return { ok: true, data: allEvents }
 }
 
 console.log(sortEventsByName("asc"))
