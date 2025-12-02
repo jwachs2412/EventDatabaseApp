@@ -129,7 +129,7 @@ fetchEventsConcurrently([1, 2, 3])
   .catch(err => console.log("Error fetching events", err))
 
 // Get All Events Safely
-async function getAllEventsSafe(ids: number[]): Promise<{ successes: Event[]; failures: number[] }> {
+async function getAllEventsSafe(ids: ReadonlyArray<number>): Promise<{ successes: Event[]; failures: number[] }> {
   const promises = ids.map(id => fetchEventByID(id))
   const results = await Promise.all(promises)
 
