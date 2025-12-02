@@ -1,11 +1,17 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var EventKind;
+(function (EventKind) {
+    EventKind["Concert"] = "concert";
+    EventKind["Festival"] = "festival";
+    EventKind["Sports"] = "sports";
+})(EventKind || (EventKind = {}));
 // Event Database Array
 const eventDatabase = [
-    { id: 1, type: { kind: "concert" }, name: "Chris Stapleton", date: "12/12/2018", row: 8, seat: 23, notes: "The concert was outstanding. 10/10" },
-    { id: 2, type: { kind: "sports" }, name: "Cleveland Browns v Pittsburgh Steelers", date: "11/6/1998", notes: "The Browns won 23-14 and played outstanding. 10/10" },
-    { id: 3, type: { kind: "concert" }, name: "Led Zepplin", date: "6/19/1974", row: "FF", seat: 2, notes: "The concert was outstanding. Led Zepplin blew the roof off! 10/10" },
-    { id: 4, type: { kind: "festival", dateRange: ["7/12/2024", "7/14/2024"] }, name: "Bonnaroo" }
+    { id: 1, type: { kind: EventKind.Concert }, name: "Chris Stapleton", date: "12/12/2018", row: 8, seat: 23, notes: "The concert was outstanding. 10/10" },
+    { id: 2, type: { kind: EventKind.Sports }, name: "Cleveland Browns v Pittsburgh Steelers", date: "11/6/1998", notes: "The Browns won 23-14 and played outstanding. 10/10" },
+    { id: 3, type: { kind: EventKind.Concert }, name: "Led Zepplin", date: "6/19/1974", row: "FF", seat: 2, notes: "The concert was outstanding. Led Zepplin blew the roof off! 10/10" },
+    { id: 4, type: { kind: EventKind.Festival, dateRange: ["7/12/2024", "7/14/2024"] }, name: "Bonnaroo" }
 ];
 // Delay function
 function delay(ms) {
@@ -157,7 +163,7 @@ function randomFail() {
 }
 async function fetchEventsWithFailure() {
     await delay(500);
-    if (!randomFail) {
+    if (!randomFail()) {
         throw new Error("Failed to fetch events.");
     }
     return eventDatabase;
@@ -199,7 +205,7 @@ console.log(getType);
 if (getType === undefined) {
     console.log("Could not find the type of event you're looking for.");
 }
-else if (getType.kind === "festival") {
+else if (getType.kind === EventKind.Festival) {
     const getDateRange = getProperty(getType, "dateRange");
     console.log(getDateRange);
 }
@@ -237,13 +243,13 @@ async function addEventAsync(obj) {
     }
 }
 addEventAsync({
-    type: { kind: "concert" },
+    type: { kind: EventKind.Concert },
     name: "ZZ Top",
     date: "9/8/1992",
     notes: "Incredible show, worth every penny!"
 });
 addEventAsync({
-    type: { kind: "sports" },
+    type: { kind: EventKind.Sports },
     name: "Cleveland Guardians v Detroit Tigers",
     date: "5/15/2017",
     notes: "Guardians won 10-9"
@@ -291,26 +297,26 @@ function viewEventType(events, kind) {
         return;
     }
     const eventTypes = events.map(event => event.type.kind);
-    const emojis = kind === "concert" ? ["🎵", "🎸"] : kind === "sports" ? ["💪", "🎽"] : ["🎶✨", "🎤🎉"];
+    const emojis = kind === EventKind.Concert ? ["🎵", "🎸"] : kind === EventKind.Sports ? ["💪", "🎽"] : ["🎶✨", "🎤🎉"];
     if (eventTypes.includes(kind)) {
-        const eventType = events.filter(event => event.type.kind.toLowerCase() === kind.toLowerCase());
+        const eventType = events.filter(event => event.type.kind === kind);
         console.log(`\nFiltering by "${kind}"...`);
-        if (kind === "concert") {
+        if (kind === EventKind.Concert) {
             eventType.forEach((event, index) => {
                 const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1];
                 console.log(`${eventEmoji} ${event.name} -- ${event.date}`);
             });
         }
-        else if (kind === "sports") {
+        else if (kind === EventKind.Sports) {
             eventType.forEach((event, index) => {
                 const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1];
                 console.log(`${eventEmoji} ${event.name} -- ${event.date}`);
             });
         }
-        else if (kind === "festival") {
+        else if (kind === EventKind.Festival) {
             eventType.forEach((event, index) => {
                 const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1];
-                if (event.type.kind === "festival" && event.type.dateRange) {
+                if (event.type.kind === EventKind.Festival && event.type.dateRange) {
                     const [startDate, endDate] = event.type.dateRange;
                     console.log(`${eventEmoji} ${event.name} -- ${startDate} - ${endDate}`);
                 }
@@ -329,9 +335,9 @@ function viewEventType(events, kind) {
         console.log(`\nEvent type "${kind}" does not exist.`);
     }
 }
-viewEventType(eventDatabase, "concert");
-viewEventType(eventDatabase, "sports");
-viewEventType(eventDatabase, "festival");
+viewEventType(eventDatabase, EventKind.Concert);
+viewEventType(eventDatabase, EventKind.Sports);
+viewEventType(eventDatabase, EventKind.Festival);
 // viewEventType(eventDatabase, "theater")
 // viewEventType(eventDatabase, "technology")
 // Get Event by ID
@@ -356,7 +362,7 @@ viewEvent(2);
 function applyTypeUpdates(event, updates) {
     if (!updates)
         return;
-    if (event.type.kind === "festival" && updates.dateRange) {
+    if (event.type.kind === EventKind.Festival && updates.dateRange) {
         event.type.dateRange = updates.dateRange;
     }
 }
