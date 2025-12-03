@@ -14,7 +14,7 @@ type EventTypeUpdate = Partial<{ dateRange: [string, string] }>
 type Result<T> = { ok: true; data: T } | { ok: false; error: string }
 
 // Shape of the Event Object
-interface Event {
+type Event = {
   id: number
   type: EventType
   name: string
@@ -25,7 +25,7 @@ interface Event {
 }
 
 // Event Database Array
-const eventDatabase: Event[] = [
+let eventDatabase: Event[] = [
   { id: 1, type: { kind: EventKind.Concert }, name: "Chris Stapleton", date: "12/12/2018", row: 8, seat: 23, notes: "The concert was outstanding. 10/10" },
   { id: 2, type: { kind: EventKind.Sports }, name: "Cleveland Browns v Pittsburgh Steelers", date: "11/6/1998", notes: "The Browns won 23-14 and played outstanding. 10/10" },
   { id: 3, type: { kind: EventKind.Concert }, name: "Led Zepplin", date: "6/19/1974", row: "FF", seat: 2, notes: "The concert was outstanding. Led Zepplin blew the roof off! 10/10" },
@@ -456,18 +456,19 @@ editEvent(10, { notes: "This shouldn't work." })
 
 // Delete Event
 function deleteEvent(id: number): void {
-  const index = eventDatabase.findIndex(event => event.id === id)
+  // Find the event first
+  const eventToRemove = eventDatabase.find(event => event.id === id)
 
-  if (index === -1) {
+  if (!eventToRemove) {
     console.log(`\nEvent not found.`)
     return
   }
 
-  const eventRemoved = eventDatabase.splice(index, 1)[0]
-  if (eventRemoved) {
-    console.log(`\nEvent "${eventRemoved.name}" (ID: ${eventRemoved.id}) deleted successfully.`)
-    console.log(JSON.stringify(eventDatabase, null, 2))
-  }
+  // Immutable delete
+  eventDatabase = eventDatabase.filter(event => event.id !== id)
+
+  console.log(`\nEvent "${eventToRemove.name}" (ID: ${eventToRemove.id}) deleted successfully.`)
+  console.log(JSON.stringify(eventDatabase, null, 2))
 }
 
 deleteEvent(0)
