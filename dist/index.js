@@ -373,12 +373,21 @@ function editEvent(eventID, updates) {
         return { ok: false, error: `Event id: ${eventID} was not found.` };
     }
     const { type: typeUpdates, id: _ignore, ...updatesWithoutID } = updates;
-    Object.assign(eventToEdit, updatesWithoutID);
-    // Update type fields safely
-    applyTypeUpdates(eventToEdit, typeUpdates);
+    // Create the updated event immutably
+    const updatedEvent = {
+        ...eventToEdit,
+        ...updatesWithoutID,
+        type: eventToEdit.type // we'll apply type updates next
+    };
+    // Apply type updates immutably
+    if (typeUpdates && updatedEvent.type.kind === EventKind.Festival) {
+        updatedEvent.type = { ...updatedEvent.type, ...typeUpdates };
+    }
+    // Replace in database
+    eventDatabase = eventDatabase.map(e => (e.id === eventID ? updatedEvent : e));
     console.log(`Event id: ${eventID} has been updated. Here is the updated event database: \n`);
     console.log(JSON.stringify(eventDatabase, null, 2));
-    return { ok: true, data: eventToEdit };
+    return { ok: true, data: updatedEvent };
 }
 editEvent(1, { notes: "The Browns won by 17! Big win!", seat: 10 });
 editEvent(2, { id: 10, notes: "Wowzers!", row: 10, seat: 30 });

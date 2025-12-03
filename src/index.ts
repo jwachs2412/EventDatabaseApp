@@ -437,14 +437,25 @@ function editEvent(eventID: number, updates: Omit<Partial<Event>, "type"> & { ty
 
   const { type: typeUpdates, id: _ignore, ...updatesWithoutID } = updates
 
-  Object.assign(eventToEdit, updatesWithoutID)
+  // Create the updated event immutably
+  const updatedEvent: Event = {
+    ...eventToEdit,
+    ...updatesWithoutID,
+    type: eventToEdit.type // we'll apply type updates next
+  }
 
-  // Update type fields safely
-  applyTypeUpdates(eventToEdit, typeUpdates)
+  // Apply type updates immutably
+  if (typeUpdates && updatedEvent.type.kind === EventKind.Festival) {
+    updatedEvent.type = { ...updatedEvent.type, ...typeUpdates }
+  }
+
+  // Replace in database
+  eventDatabase = eventDatabase.map(e => (e.id === eventID ? updatedEvent : e))
 
   console.log(`Event id: ${eventID} has been updated. Here is the updated event database: \n`)
   console.log(JSON.stringify(eventDatabase, null, 2))
-  return { ok: true, data: eventToEdit }
+
+  return { ok: true, data: updatedEvent }
 }
 
 editEvent(1, { notes: "The Browns won by 17! Big win!", seat: 10 })
