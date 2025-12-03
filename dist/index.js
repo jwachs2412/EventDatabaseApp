@@ -19,35 +19,6 @@ function delay(ms) {
         setTimeout(resolve, ms);
     });
 }
-// Manually constructed Promise
-function manualEventPromise(id) {
-    return new Promise((resolve, reject) => {
-        const event = eventDatabase.find(e => e.id === id);
-        if (event)
-            resolve(event);
-        else
-            reject(new Error(`Event ID: ${id} not found.`));
-    });
-}
-// Practice tests
-async function testSyncPromiseBehavior(id) {
-    console.log("Before calling manualEventPromise");
-    try {
-        const event = await manualEventPromise(id);
-        console.log("Resolved event: ", event);
-    }
-    catch (e) {
-        console.log("Error: ", e.message);
-    }
-    console.log("After calling manualEventPromise");
-}
-testSyncPromiseBehavior(3);
-testSyncPromiseBehavior(99);
-// Promise resolving to a promise
-function resolveToAnotherPromise() {
-    return Promise.resolve(delay(200).then(() => "Inner promise finished!"));
-}
-resolveToAnotherPromise().then(v => console.log(v));
 // Fetch all events; used in showEvents() function
 async function fetchEventsFromDB() {
     await delay(500);
@@ -157,41 +128,6 @@ async function showSingleEvent(n) {
     }
 }
 showSingleEvent(1);
-// Randomly throws error
-function randomFail() {
-    return Math.random() < 0.3;
-}
-async function fetchEventsWithFailure() {
-    await delay(500);
-    if (!randomFail()) {
-        throw new Error("Failed to fetch events.");
-    }
-    return eventDatabase;
-}
-async function test() {
-    try {
-        const result = await fetchEventsWithFailure();
-        console.log("\nSuccess\n", result);
-    }
-    catch (error) {
-        console.log("\nFailed\n", error);
-    }
-}
-test();
-// Loading and Error states
-async function listAndDisplayEvents() {
-    console.log("Loading events...");
-    try {
-        const result = await fetchEventsWithFailure();
-        console.log("\nFinished loading!\n", result);
-    }
-    catch (error) {
-        console.log("Failed to fetch.", error);
-    }
-    console.log("Done.");
-    //   return eventDatabase
-}
-listAndDisplayEvents();
 // Get property generic function
 function getProperty(obj, key) {
     if (!obj)
