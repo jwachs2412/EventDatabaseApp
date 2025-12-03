@@ -229,11 +229,12 @@ function doesDateExist(e) {
 async function addEventAsync(obj) {
     await delay(500);
     try {
-        // isEventTypeValid(obj)
         const lastEvent = eventDatabase[eventDatabase.length - 1];
         const newId = lastEvent ? lastEvent.id + 1 : 1;
         doesDateExist(obj);
-        eventDatabase.push({ id: newId, ...obj });
+        // Immutable addition
+        const newEvent = { id: newId, ...obj };
+        eventDatabase = [...eventDatabase, newEvent];
         console.log("You successfully added your event.");
         // Pretty Prints the Event Database, showing the Date Range
         console.log(JSON.stringify(eventDatabase, null, 2));
