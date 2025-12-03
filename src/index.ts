@@ -14,7 +14,7 @@ type EventTypeUpdate = Partial<{ dateRange: [string, string] }>
 type Result<T> = { ok: true; data: T } | { ok: false; error: string }
 
 // Shape of the Event Object
-type Event = {
+type AppEvent = {
   id: number
   type: EventType
   name: string
@@ -25,7 +25,7 @@ type Event = {
 }
 
 // Event Database Array
-let eventDatabase: Event[] = [
+let eventDatabase: AppEvent[] = [
   { id: 1, type: { kind: EventKind.Concert }, name: "Chris Stapleton", date: "12/12/2018", row: 8, seat: 23, notes: "The concert was outstanding. 10/10" },
   { id: 2, type: { kind: EventKind.Sports }, name: "Cleveland Browns v Pittsburgh Steelers", date: "11/6/1998", notes: "The Browns won 23-14 and played outstanding. 10/10" },
   { id: 3, type: { kind: EventKind.Concert }, name: "Led Zepplin", date: "6/19/1974", row: "FF", seat: 2, notes: "The concert was outstanding. Led Zepplin blew the roof off! 10/10" },
@@ -40,7 +40,7 @@ function delay(ms: number): Promise<void> {
 }
 
 // Fetch all events; used in showEvents() function
-async function fetchEventsFromDB(): Promise<Event[]> {
+async function fetchEventsFromDB(): Promise<AppEvent[]> {
   await delay(500)
 
   const events = eventDatabase
@@ -53,7 +53,7 @@ async function fetchEventsFromDB(): Promise<Event[]> {
 }
 
 // Sort events
-function sortEventsByName(sortDirection: "asc" | "desc"): Result<Event[]> {
+function sortEventsByName(sortDirection: "asc" | "desc"): Result<AppEvent[]> {
   const allEvents = eventDatabase
 
   if (allEvents.length === 0) {
@@ -89,13 +89,13 @@ async function showEvents(): Promise<void> {
 showEvents()
 
 // Fetch events concurrently
-async function fetchEventsConcurrently(ids: number[]): Promise<Event[]> {
+async function fetchEventsConcurrently(ids: number[]): Promise<AppEvent[]> {
   const promises = ids.map(id => fetchEventByID(id))
 
   const results = await Promise.all(promises)
 
   // Custom Type Predicate - a function that acts as a user-defined type guard - parameterName is TypeName
-  const events: Event[] = results.filter((r): r is { ok: true; data: Event } => r.ok).map(r => r.data)
+  const events: AppEvent[] = results.filter((r): r is { ok: true; data: AppEvent } => r.ok).map(r => r.data)
 
   return events
 }
@@ -105,11 +105,11 @@ fetchEventsConcurrently([1, 2, 3])
   .catch(err => console.log("Error fetching events", err))
 
 // Get All Events Safely
-async function getAllEventsSafe(ids: ReadonlyArray<number>): Promise<{ successes: Event[]; failures: number[] }> {
+async function getAllEventsSafe(ids: ReadonlyArray<number>): Promise<{ successes: AppEvent[]; failures: number[] }> {
   const promises = ids.map(id => fetchEventByID(id))
   const results = await Promise.all(promises)
 
-  const successes: Event[] = []
+  const successes: AppEvent[] = []
   const failures: number[] = []
 
   results.forEach((result, index) => {
@@ -126,7 +126,7 @@ async function getAllEventsSafe(ids: ReadonlyArray<number>): Promise<{ successes
 getAllEventsSafe([1, 2, 99]).then(console.log)
 
 // Fetch event by ID - data layer
-async function fetchEventByID(id: number): Promise<Result<Event>> {
+async function fetchEventByID(id: number): Promise<Result<AppEvent>> {
   await delay(300)
   //   return eventDatabase[id]
   const event = eventDatabase.find(event => event.id === id)
@@ -192,7 +192,7 @@ function isValidDate(date: string): boolean {
 }
 
 // Helper function to check if date exists and if so is it valid
-function doesDateExist(e: Omit<Event, "id">): boolean {
+function doesDateExist(e: Omit<AppEvent, "id">): boolean {
   if (!e.date) return true
 
   const valid = isValidDate(e.date)
@@ -204,7 +204,7 @@ function doesDateExist(e: Omit<Event, "id">): boolean {
 }
 
 // Add an Event Async
-async function addEventAsync(obj: Omit<Event, "id">): Promise<void> {
+async function addEventAsync(obj: Omit<AppEvent, "id">): Promise<void> {
   await delay(500)
 
   try {
@@ -214,7 +214,7 @@ async function addEventAsync(obj: Omit<Event, "id">): Promise<void> {
     doesDateExist(obj)
 
     // Immutable addition
-    const newEvent: Event = { id: newId, ...obj }
+    const newEvent: AppEvent = { id: newId, ...obj }
     eventDatabase = [...eventDatabase, newEvent]
 
     console.log("You successfully added your event.")
@@ -240,7 +240,7 @@ addEventAsync({
 })
 
 // List All Events
-function listEvents(events: Event[]) {
+function listEvents(events: AppEvent[]) {
   console.log("\nList of All Events You Have Attended:\n")
 
   for (const currentEvent of events) {
@@ -251,7 +251,7 @@ function listEvents(events: Event[]) {
 listEvents(eventDatabase)
 
 // Get Event Summary
-function getEventSummary(events: Event[]): void {
+function getEventSummary(events: AppEvent[]): void {
   if (events.length === 0) {
     console.log("There are no events...")
     return
@@ -283,7 +283,7 @@ function getEventSummary(events: Event[]): void {
 getEventSummary(eventDatabase)
 
 // View Events by Type
-function viewEventType(events: Event[], kind: EventKind): void {
+function viewEventType(events: AppEvent[], kind: EventKind): void {
   if (events.length === 0) {
     console.log(`No events found.`)
     return
@@ -332,7 +332,7 @@ viewEventType(eventDatabase, EventKind.Festival)
 // viewEventType(eventDatabase, "technology")
 
 // Get Event by ID
-function getEventById(eventId: number): Event | undefined {
+function getEventById(eventId: number): AppEvent | undefined {
   return eventDatabase.find(event => event.id === eventId)
 }
 
@@ -354,7 +354,7 @@ function viewEvent(id: number): void {
 viewEvent(2)
 
 // Helper function for applying dateRange updates; helps avoid runtime errors
-function applyTypeUpdates(event: Event, updates?: EventTypeUpdate): void {
+function applyTypeUpdates(event: AppEvent, updates?: EventTypeUpdate): void {
   if (!updates) return
 
   if (event.type.kind === EventKind.Festival && updates.dateRange) {
@@ -363,7 +363,7 @@ function applyTypeUpdates(event: Event, updates?: EventTypeUpdate): void {
 }
 
 // Edit Single Event - keeping Partial in there as a helper - makes all Event props optional for update - refactor below function at some point, removing the if statements and replacing with less code
-function editEvent(eventID: number, updates: Omit<Partial<Event>, "type"> & { type?: EventTypeUpdate }): Result<Event> {
+function editEvent(eventID: number, updates: Omit<Partial<AppEvent>, "type"> & { type?: EventTypeUpdate }): Result<AppEvent> {
   const eventToEdit = getEventById(eventID)
   if (!eventToEdit) {
     return { ok: false, error: `Event id: ${eventID} was not found.` }
@@ -372,7 +372,7 @@ function editEvent(eventID: number, updates: Omit<Partial<Event>, "type"> & { ty
   const { type: typeUpdates, id: _ignore, ...updatesWithoutID } = updates
 
   // Create the updated event immutably
-  const updatedEvent: Event = {
+  const updatedEvent: AppEvent = {
     ...eventToEdit,
     ...updatesWithoutID,
     type: eventToEdit.type // we'll apply type updates next
