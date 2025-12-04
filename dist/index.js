@@ -284,13 +284,19 @@ console.log(getEventById(3));
 // View Single Event
 function viewEvent(id) {
     const singleEvent = getEventById(id);
-    if (singleEvent) {
-        console.log("\nHere is the event you were looking for:\n");
-        console.log(`Event Type: ${singleEvent.type.kind.charAt(0).toUpperCase() + singleEvent.type.kind.slice(1)}\nEvent: ${singleEvent.name.charAt(0).toUpperCase() + singleEvent.name.slice(1)}\nDate(s): ${singleEvent.date}\nSeat: ${singleEvent.seat ? singleEvent.seat : "N/A"}\nRow: ${singleEvent.row ? singleEvent.row : "N/A"}\nEvent Notes: ${singleEvent.notes ? singleEvent.notes : "N/A"}\n`);
-    }
-    else {
+    if (!singleEvent) {
         console.log(`❌ No event found with ID: ${id}\n`);
+        return;
     }
+    const formattedKind = singleEvent.type?.kind ? singleEvent.type.kind.charAt(0).toUpperCase() + singleEvent.type.kind.slice(1) : "Unknown";
+    const dateDisplay = singleEvent.type.kind === EventKind.Festival ? singleEvent.type.dateRange?.join(" - ") ?? "Date range unavailable" : singleEvent.date ?? "Date unavailable";
+    console.log("\nHere is the event you were looking for:\n");
+    console.log(`Event Type: ${formattedKind}
+Event: ${singleEvent.name ?? "Unnamed Event"}
+Date(s): ${dateDisplay}
+Seat: ${singleEvent.seat ?? "N/A"}
+Row: ${singleEvent.row ?? "N/A"}
+Event Notes: ${singleEvent.notes ?? "N/A"}\n`);
 }
 viewEvent(2);
 // Helper function for applying dateRange updates; helps avoid runtime errors
