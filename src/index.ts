@@ -40,17 +40,17 @@ function delay(ms: number): Promise<void> {
 }
 
 // Fetch all events; used in showEvents() function
-async function fetchEventsFromDB(): Promise<AppEvent[]> {
-  await delay(500)
+// async function fetchEventsFromDB(): Promise<AppEvent[]> {
+//   await delay(500)
 
-  const events = eventDatabase
+//   const events = eventDatabase
 
-  if (events.length === 0) {
-    throw new Error("No events found in the database")
-  }
+//   if (events.length === 0) {
+//     throw new Error("No events found in the database")
+//   }
 
-  return events
-}
+//   return events
+// }
 
 // Sort events
 function sortEventsByName(sortDirection: "asc" | "desc"): Result<AppEvent[]> {
@@ -358,13 +358,13 @@ function viewEvent(id: number): void {
 viewEvent(2)
 
 // Helper function for applying dateRange updates; helps avoid runtime errors
-function applyTypeUpdates(event: AppEvent, updates?: EventTypeUpdate): void {
-  if (!updates) return
+// function applyTypeUpdates(event: AppEvent, updates?: EventTypeUpdate): void {
+//   if (!updates) return
 
-  if (event.type.kind === EventKind.Festival && updates.dateRange) {
-    event.type.dateRange = updates.dateRange
-  }
-}
+//   if (event.type.kind === EventKind.Festival && updates.dateRange) {
+//     event.type.dateRange = updates.dateRange
+//   }
+// }
 
 // Edit Single Event - keeping Partial in there as a helper - makes all Event props optional for update - refactor below function at some point, removing the if statements and replacing with less code
 function editEvent(eventID: number, updates: Omit<Partial<AppEvent>, "type"> & { type?: EventTypeUpdate }): Result<AppEvent> {
