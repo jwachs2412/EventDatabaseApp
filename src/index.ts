@@ -76,15 +76,19 @@ console.log(sortEventsByName("desc"))
 // Show all events in database; combines async fetching with try/catch/finally - good because readability, error safety, reliable thanks to finally, easily maintainable
 async function showEvents(): Promise<void> {
   console.log("Loading events...")
-  try {
-    const allEvents = await fetchEventsFromDB()
-    console.log("Here are the list of events after a 1/2 second wait:")
-    console.log(allEvents)
-  } catch (err) {
-    console.log("Error: ", (err as Error).message)
-  } finally {
+
+  const result = EventService.fetchEventsSafe()
+
+  if (!result.ok) {
+    console.log("Error: ", result.error)
     console.log("Finished attempting to load all events in the database.")
+    return
   }
+
+  console.log("Here are the list of events after a 1/2 second wait:")
+  console.log(result.data)
+
+  console.log("Finished attempting to load all events in the database.")
 }
 showEvents()
 
@@ -104,7 +108,7 @@ fetchEventsConcurrently([1, 2, 3])
   .then(events => console.log("Fetched events concurrently: ", events))
   .catch(err => console.log("Error fetching events", err))
 
-// Get All Events Safely
+// Get All Events Safely; batch-fetch utility
 async function getAllEventsSafe(ids: ReadonlyArray<number>): Promise<{ successes: AppEvent[]; failures: number[] }> {
   const promises = ids.map(id => fetchEventByID(id))
   const results = await Promise.all(promises)
@@ -400,25 +404,25 @@ editEvent(3, {
 editEvent(10, { notes: "This shouldn't work." })
 
 // Delete Event
-function deleteEvent(id: number): void {
-  // Find the event first
-  const eventToRemove = eventDatabase.find(event => event.id === id)
+// function deleteEventUI(id: number): void {
+//   // Find the event first
+//   const eventToRemove = eventDatabase.find(event => event.id === id)
 
-  if (!eventToRemove) {
-    console.log(`\nEvent not found.`)
-    return
-  }
+//   if (!eventToRemove) {
+//     console.log(`\nEvent not found.`)
+//     return
+//   }
 
-  // Immutable delete
-  eventDatabase = eventDatabase.filter(event => event.id !== id)
+//   // Immutable delete
+//   eventDatabase = eventDatabase.filter(event => event.id !== id)
 
-  console.log(`\nEvent "${eventToRemove.name}" (ID: ${eventToRemove.id}) deleted successfully.`)
-  console.log(JSON.stringify(eventDatabase, null, 2))
-}
+//   console.log(`\nEvent "${eventToRemove.name}" (ID: ${eventToRemove.id}) deleted successfully.`)
+//   console.log(JSON.stringify(eventDatabase, null, 2))
+// }
 
-deleteEvent(0)
-deleteEvent(2)
-deleteEvent(10)
+// deleteEventUI(0)
+// deleteEventUI(2)
+// deleteEventUI(10)
 
 // Showcasing map()
 const eventNames = eventDatabase.map(event => event.name)
@@ -431,3 +435,28 @@ console.log(eventIDs)
 // Showcasing filter() and finding a string pattern based on an event name
 const eventNamePattern = eventDatabase.filter(eventName => eventName.name === "Cleveland Browns v Pittsburgh Steelers")
 console.log(eventNamePattern)
+
+// Backend / API Layer
+namespace EventService {
+  // export function fetchEvents(): readonly AppEvent[] {
+  //   return eventDatabase
+  // }
+
+  export function fetchEventsSafe(): Result<readonly AppEvent[]> {
+    if (eventDatabase.length === 0) {
+      return { ok: false, error: "No events found" }
+    }
+
+    return { ok: true, data: eventDatabase }
+  }
+
+  export function addEvent(event: AppEvent): readonly AppEvent[] {
+    eventDatabase = [...eventDatabase, event]
+    return eventDatabase
+  }
+
+  export function deleteEvent(id: number): readonly AppEvent[] {
+    eventDatabase = eventDatabase.filter(e => e.id !== id)
+    return eventDatabase
+  }
+}
