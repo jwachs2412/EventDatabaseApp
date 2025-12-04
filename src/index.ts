@@ -293,12 +293,12 @@ function viewEventType(events: AppEvent[], kind: EventKind): void {
     return
   }
 
-  const eventTypes = events.map(event => event.type.kind)
+  const eventTypes = events.map(event => event.type?.kind)
 
   const emojis = kind === EventKind.Concert ? ["🎵", "🎸"] : kind === EventKind.Sports ? ["💪", "🎽"] : ["🎶✨", "🎤🎉"]
 
   if (eventTypes.includes(kind)) {
-    const eventType = events.filter(event => event.type.kind === kind)
+    const eventType = events.filter(event => event.type?.kind === kind)
     console.log(`\nFiltering by "${kind}"...`)
     if (kind === EventKind.Concert) {
       eventType.forEach((event, index) => {
@@ -313,7 +313,8 @@ function viewEventType(events: AppEvent[], kind: EventKind): void {
     } else if (kind === EventKind.Festival) {
       eventType.forEach((event, index) => {
         const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1]
-        if (event.type.kind === EventKind.Festival && event.type.dateRange) {
+
+        if (event.type?.kind === EventKind.Festival && event.type.dateRange) {
           const [startDate, endDate] = event.type.dateRange
           console.log(`${eventEmoji} ${event.name} -- ${startDate} - ${endDate}`)
         } else {
