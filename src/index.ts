@@ -1,3 +1,8 @@
+// TODO: Add persistent storage instead of in-memory DB
+// TODO: Add validation for event input
+// TODO: Add delete confirmation flow
+// TODO: Add sorting and pagination
+
 enum EventKind {
   Concert = "concert",
   Festival = "festival",

@@ -1,4 +1,8 @@
 "use strict";
+// TODO: Add persistent storage instead of in-memory DB
+// TODO: Add validation for event input
+// TODO: Add delete confirmation flow
+// TODO: Add sorting and pagination
 Object.defineProperty(exports, "__esModule", { value: true });
 var EventKind;
 (function (EventKind) {
