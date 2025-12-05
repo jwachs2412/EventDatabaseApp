@@ -368,14 +368,18 @@ Event Notes: ${singleEvent.notes ?? "N/A"}\n`
 
 viewEvent(2)
 
+type EditableEventFields = {
+  [K in keyof AppEvent as K extends "id" ? never : K]: AppEvent[K]
+}
+
 // Edit Single Event - keeping Partial in there as a helper - makes all Event props optional for update - refactor below function at some point, removing the if statements and replacing with less code
-function editEvent(eventID: number, updates: Omit<Partial<AppEvent>, "type"> & { type?: EventTypeUpdate }): Result<AppEvent> {
+function editEvent(eventID: number, updates: Partial<Omit<EditableEventFields, "type">> & { type?: EventTypeUpdate }): Result<AppEvent> {
   const eventToEdit = getEventById(eventID)
   if (!eventToEdit) {
     return { ok: false, error: `Event id: ${eventID} was not found.` }
   }
 
-  const { type: typeUpdates, id: _ignore, ...updatesWithoutID } = updates
+  const { type: typeUpdates, ...updatesWithoutID } = updates
 
   // Create the updated event immutably
   const updatedEvent: AppEvent = {
@@ -399,7 +403,7 @@ function editEvent(eventID: number, updates: Omit<Partial<AppEvent>, "type"> & {
 }
 
 editEvent(1, { notes: "The Browns won by 17! Big win!", seat: 10 })
-editEvent(2, { id: 10, notes: "Wowzers!", row: 10, seat: 30 })
+// editEvent(2, { id: 10, notes: "Wowzers!", row: 10, seat: 30 })
 editEvent(3, {
   type: { dateRange: ["2025-01-01", "2025-01-03"] }
 })

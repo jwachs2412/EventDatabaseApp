@@ -298,7 +298,7 @@ function editEvent(eventID, updates) {
     if (!eventToEdit) {
         return { ok: false, error: `Event id: ${eventID} was not found.` };
     }
-    const { type: typeUpdates, id: _ignore, ...updatesWithoutID } = updates;
+    const { type: typeUpdates, ...updatesWithoutID } = updates;
     // Create the updated event immutably
     const updatedEvent = {
         ...eventToEdit,
@@ -316,7 +316,7 @@ function editEvent(eventID, updates) {
     return { ok: true, data: updatedEvent };
 }
 editEvent(1, { notes: "The Browns won by 17! Big win!", seat: 10 });
-editEvent(2, { id: 10, notes: "Wowzers!", row: 10, seat: 30 });
+// editEvent(2, { id: 10, notes: "Wowzers!", row: 10, seat: 30 })
 editEvent(3, {
     type: { dateRange: ["2025-01-01", "2025-01-03"] }
 });
