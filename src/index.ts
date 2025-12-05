@@ -24,6 +24,10 @@ type AppEvent = {
   notes?: string
 }
 
+type NewEventInput = Omit<AppEvent, "id">
+
+type EventFromDB = (typeof eventDatabase)[number]
+
 // Event Database Array
 let eventDatabase: AppEvent[] = [
   { id: 1, type: { kind: EventKind.Concert }, name: "Chris Stapleton", date: "12/12/2018", row: 8, seat: 23, notes: "The concert was outstanding. 10/10" },
