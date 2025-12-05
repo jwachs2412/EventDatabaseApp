@@ -216,6 +216,12 @@ function getEventSummary(events) {
     console.log(`Events with notes: ${notesCount}`);
 }
 getEventSummary(eventDatabase);
+// Assertion Function
+function assertFestival(event) {
+    if (event.type.kind !== EventKind.Festival || !event.type.dateRange) {
+        throw new Error("Event is not a valid festival");
+    }
+}
 // View Events by Type
 function viewEventType(events, kind) {
     if (events.length === 0) {
@@ -242,13 +248,9 @@ function viewEventType(events, kind) {
         else if (kind === EventKind.Festival) {
             eventType.forEach((event, index) => {
                 const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1];
-                if (event.type?.kind === EventKind.Festival && event.type.dateRange) {
-                    const [startDate, endDate] = event.type.dateRange;
-                    console.log(`${eventEmoji} ${event.name} -- ${startDate} - ${endDate}`);
-                }
-                else {
-                    console.log(`${eventEmoji} ${event.name} -- ${event.date}`);
-                }
+                assertFestival(event);
+                const [startDate, endDate] = event.type.dateRange;
+                console.log(`${eventEmoji} ${event.name} -- ${startDate} - ${endDate}`);
             });
         }
         else {

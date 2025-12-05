@@ -277,6 +277,15 @@ function getEventSummary(events: AppEvent[]): void {
 
 getEventSummary(eventDatabase)
 
+// Assertion Function
+function assertFestival(event: AppEvent): asserts event is AppEvent & {
+  type: { kind: EventKind.Festival; dateRange: [string, string] }
+} {
+  if (event.type.kind !== EventKind.Festival || !event.type.dateRange) {
+    throw new Error("Event is not a valid festival")
+  }
+}
+
 // View Events by Type
 function viewEventType(events: AppEvent[], kind: EventKind): void {
   if (events.length === 0) {
@@ -305,12 +314,9 @@ function viewEventType(events: AppEvent[], kind: EventKind): void {
       eventType.forEach((event, index) => {
         const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1]
 
-        if (event.type?.kind === EventKind.Festival && event.type.dateRange) {
-          const [startDate, endDate] = event.type.dateRange
-          console.log(`${eventEmoji} ${event.name} -- ${startDate} - ${endDate}`)
-        } else {
-          console.log(`${eventEmoji} ${event.name} -- ${event.date}`)
-        }
+        assertFestival(event)
+        const [startDate, endDate] = event.type.dateRange
+        console.log(`${eventEmoji} ${event.name} -- ${startDate} - ${endDate}`)
       })
     } else {
       eventType.map(event => {
