@@ -19,15 +19,6 @@ function delay(ms) {
         setTimeout(resolve, ms);
     });
 }
-// Fetch all events; used in showEvents() function
-// async function fetchEventsFromDB(): Promise<AppEvent[]> {
-//   await delay(500)
-//   const events = eventDatabase
-//   if (events.length === 0) {
-//     throw new Error("No events found in the database")
-//   }
-//   return events
-// }
 // Sort events
 function sortEventsByName(sortDirection) {
     const allEvents = eventDatabase;
@@ -299,13 +290,6 @@ Row: ${singleEvent.row ?? "N/A"}
 Event Notes: ${singleEvent.notes ?? "N/A"}\n`);
 }
 viewEvent(2);
-// Helper function for applying dateRange updates; helps avoid runtime errors
-// function applyTypeUpdates(event: AppEvent, updates?: EventTypeUpdate): void {
-//   if (!updates) return
-//   if (event.type.kind === EventKind.Festival && updates.dateRange) {
-//     event.type.dateRange = updates.dateRange
-//   }
-// }
 // Edit Single Event - keeping Partial in there as a helper - makes all Event props optional for update - refactor below function at some point, removing the if statements and replacing with less code
 function editEvent(eventID, updates) {
     const eventToEdit = getEventById(eventID);
@@ -335,22 +319,22 @@ editEvent(3, {
     type: { dateRange: ["2025-01-01", "2025-01-03"] }
 });
 editEvent(10, { notes: "This shouldn't work." });
-// Delete Event
-// function deleteEventUI(id: number): void {
-//   // Find the event first
-//   const eventToRemove = eventDatabase.find(event => event.id === id)
-//   if (!eventToRemove) {
-//     console.log(`\nEvent not found.`)
-//     return
-//   }
-//   // Immutable delete
-//   eventDatabase = eventDatabase.filter(event => event.id !== id)
-//   console.log(`\nEvent "${eventToRemove.name}" (ID: ${eventToRemove.id}) deleted successfully.`)
-//   console.log(JSON.stringify(eventDatabase, null, 2))
-// }
-// deleteEventUI(0)
-// deleteEventUI(2)
-// deleteEventUI(10)
+// Safe Event Field Picker
+function getEventField(event, key) {
+    return event[key];
+}
+function getFirstEventName() {
+    if (eventDatabase.length === 0) {
+        throw new Error("No events in database");
+    }
+    const firstEvent = eventDatabase[0];
+    if (!firstEvent) {
+        throw new Error("Unexpected empty database");
+    }
+    return getEventField(firstEvent, "name");
+}
+const eventName = getFirstEventName();
+console.log(eventName);
 // Showcasing map()
 const eventNames = eventDatabase.map(event => event.name);
 console.log(eventNames);
@@ -363,9 +347,6 @@ console.log(eventNamePattern);
 // Backend / API Layer
 var EventService;
 (function (EventService) {
-    // export function fetchEvents(): readonly AppEvent[] {
-    //   return eventDatabase
-    // }
     function fetchEventsSafe() {
         if (eventDatabase.length === 0) {
             return { ok: false, error: "No events found" };

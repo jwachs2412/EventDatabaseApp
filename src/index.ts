@@ -39,19 +39,6 @@ function delay(ms: number): Promise<void> {
   })
 }
 
-// Fetch all events; used in showEvents() function
-// async function fetchEventsFromDB(): Promise<AppEvent[]> {
-//   await delay(500)
-
-//   const events = eventDatabase
-
-//   if (events.length === 0) {
-//     throw new Error("No events found in the database")
-//   }
-
-//   return events
-// }
-
 // Sort events
 function sortEventsByName(sortDirection: "asc" | "desc"): Result<AppEvent[]> {
   const allEvents = eventDatabase
@@ -371,15 +358,6 @@ Event Notes: ${singleEvent.notes ?? "N/A"}\n`
 
 viewEvent(2)
 
-// Helper function for applying dateRange updates; helps avoid runtime errors
-// function applyTypeUpdates(event: AppEvent, updates?: EventTypeUpdate): void {
-//   if (!updates) return
-
-//   if (event.type.kind === EventKind.Festival && updates.dateRange) {
-//     event.type.dateRange = updates.dateRange
-//   }
-// }
-
 // Edit Single Event - keeping Partial in there as a helper - makes all Event props optional for update - refactor below function at some point, removing the if statements and replacing with less code
 function editEvent(eventID: number, updates: Omit<Partial<AppEvent>, "type"> & { type?: EventTypeUpdate }): Result<AppEvent> {
   const eventToEdit = getEventById(eventID)
@@ -417,26 +395,27 @@ editEvent(3, {
 })
 editEvent(10, { notes: "This shouldn't work." })
 
-// Delete Event
-// function deleteEventUI(id: number): void {
-//   // Find the event first
-//   const eventToRemove = eventDatabase.find(event => event.id === id)
+// Safe Event Field Picker
+function getEventField<K extends keyof AppEvent>(event: AppEvent, key: K): AppEvent[K] {
+  return event[key]
+}
 
-//   if (!eventToRemove) {
-//     console.log(`\nEvent not found.`)
-//     return
-//   }
+function getFirstEventName(): string {
+  if (eventDatabase.length === 0) {
+    throw new Error("No events in database")
+  }
 
-//   // Immutable delete
-//   eventDatabase = eventDatabase.filter(event => event.id !== id)
+  const firstEvent = eventDatabase[0]
 
-//   console.log(`\nEvent "${eventToRemove.name}" (ID: ${eventToRemove.id}) deleted successfully.`)
-//   console.log(JSON.stringify(eventDatabase, null, 2))
-// }
+  if (!firstEvent) {
+    throw new Error("Unexpected empty database")
+  }
 
-// deleteEventUI(0)
-// deleteEventUI(2)
-// deleteEventUI(10)
+  return getEventField(firstEvent, "name")
+}
+
+const eventName = getFirstEventName()
+console.log(eventName)
 
 // Showcasing map()
 const eventNames = eventDatabase.map(event => event.name)
@@ -452,10 +431,6 @@ console.log(eventNamePattern)
 
 // Backend / API Layer
 namespace EventService {
-  // export function fetchEvents(): readonly AppEvent[] {
-  //   return eventDatabase
-  // }
-
   export function fetchEventsSafe(): Result<readonly AppEvent[]> {
     if (eventDatabase.length === 0) {
       return { ok: false, error: "No events found" }
