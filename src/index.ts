@@ -368,6 +368,7 @@ Event Notes: ${singleEvent.notes ?? "N/A"}\n`
 
 viewEvent(2)
 
+// Mapped Type to make sure ID can't be edited
 type EditableEventFields = {
   [K in keyof AppEvent as K extends "id" ? never : K]: AppEvent[K]
 }
