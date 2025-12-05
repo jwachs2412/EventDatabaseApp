@@ -347,6 +347,14 @@ console.log(eventNamePattern);
 // Backend / API Layer
 var EventService;
 (function (EventService) {
+    function addEvent(event) {
+        const lastEvent = eventDatabase[eventDatabase.length - 1];
+        const newId = (lastEvent?.id ?? 0) + 1;
+        const newEvent = { id: newId, ...event };
+        eventDatabase = [...eventDatabase, newEvent];
+        return { ok: true, data: eventDatabase };
+    }
+    EventService.addEvent = addEvent;
     function fetchEventsSafe() {
         if (eventDatabase.length === 0) {
             return { ok: false, error: "No events found" };
@@ -354,11 +362,6 @@ var EventService;
         return { ok: true, data: eventDatabase };
     }
     EventService.fetchEventsSafe = fetchEventsSafe;
-    function addEvent(event) {
-        eventDatabase = [...eventDatabase, event];
-        return eventDatabase;
-    }
-    EventService.addEvent = addEvent;
     function deleteEvent(id) {
         eventDatabase = eventDatabase.filter(e => e.id !== id);
         return eventDatabase;

@@ -435,17 +435,22 @@ console.log(eventNamePattern)
 
 // Backend / API Layer
 namespace EventService {
+  export function addEvent(event: NewEventInput): Result<readonly AppEvent[]> {
+    const lastEvent = eventDatabase[eventDatabase.length - 1]
+    const newId = (lastEvent?.id ?? 0) + 1
+
+    const newEvent: AppEvent = { id: newId, ...event }
+    eventDatabase = [...eventDatabase, newEvent]
+
+    return { ok: true, data: eventDatabase }
+  }
+
   export function fetchEventsSafe(): Result<readonly AppEvent[]> {
     if (eventDatabase.length === 0) {
       return { ok: false, error: "No events found" }
     }
 
     return { ok: true, data: eventDatabase }
-  }
-
-  export function addEvent(event: AppEvent): readonly AppEvent[] {
-    eventDatabase = [...eventDatabase, event]
-    return eventDatabase
   }
 
   export function deleteEvent(id: number): readonly AppEvent[] {
