@@ -234,37 +234,28 @@ function viewEventType(events, kind) {
     }
     const eventTypes = events.map(event => event.type?.kind);
     const emojis = kind === EventKind.Concert ? ["🎵", "🎸"] : kind === EventKind.Sports ? ["💪", "🎽"] : ["🎶✨", "🎤🎉"];
-    if (eventTypes.includes(kind)) {
-        const eventType = events.filter(event => event.type?.kind === kind);
-        console.log(`\nFiltering by "${kind}"...`);
-        if (kind === EventKind.Concert) {
+    console.log(`\nFiltering by "${kind}"...`);
+    const eventType = events.filter(event => event.type?.kind === kind);
+    switch (kind) {
+        case EventKind.Concert:
+        case EventKind.Sports:
             eventType.forEach((event, index) => {
                 const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1];
                 console.log(`${eventEmoji} ${event.name} -- ${event.date}`);
             });
-        }
-        else if (kind === EventKind.Sports) {
-            eventType.forEach((event, index) => {
-                const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1];
-                console.log(`${eventEmoji} ${event.name} -- ${event.date}`);
-            });
-        }
-        else if (kind === EventKind.Festival) {
+            return;
+        case EventKind.Festival:
             eventType.forEach((event, index) => {
                 const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1];
                 assertFestival(event);
                 const [startDate, endDate] = event.type.dateRange;
                 console.log(`${eventEmoji} ${event.name} -- ${startDate} - ${endDate}`);
             });
+            return;
+        default: {
+            const _exhaustive = kind;
+            return _exhaustive;
         }
-        else {
-            eventType.map(event => {
-                console.log(`${event.name} -- ${event.date}`);
-            });
-        }
-    }
-    else {
-        console.log(`\nEvent type "${kind}" does not exist.`);
     }
 }
 viewEventType(eventDatabase, EventKind.Concert);
