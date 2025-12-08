@@ -254,7 +254,7 @@ function viewEventType(events, kind) {
             return;
         default: {
             const _exhaustive = kind;
-            return _exhaustive;
+            throw new Error(`Unhandled EventKind: ${_exhaustive}`);
         }
     }
 }

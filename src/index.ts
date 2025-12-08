@@ -325,7 +325,7 @@ function viewEventType(events: AppEvent[], kind: EventKind): void {
 
     default: {
       const _exhaustive: never = kind
-      return _exhaustive
+      throw new Error(`Unhandled EventKind: ${_exhaustive}`)
     }
   }
 }
