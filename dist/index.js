@@ -237,7 +237,7 @@ function viewEventType(events, kind) {
         console.log(`No events found.`);
         return;
     }
-    const eventTypes = events.map(event => event.type?.kind);
+    // const eventTypes = events.map(event => event.type?.kind)
     const emojis = kind === EventKind.Concert ? ["🎵", "🎸"] : kind === EventKind.Sports ? ["💪", "🎽"] : kind === EventKind.Festival ? ["🎶✨", "🎤🎉"] : kind === EventKind.Theater ? ["🎭", "🎬"] : kind === EventKind.Conference ? ["🗣", "💬 "] : kind === EventKind.Wedding ? ["👰🏻🤵🏻", "🥂"] : kind === EventKind.Museum ? ["🏛️", "🖼️"] : ["⭐⭐", "☀️☀️"];
     console.log(`\nFiltering by "${kind}"...`);
     const eventType = events.filter(event => event.type?.kind === kind);
