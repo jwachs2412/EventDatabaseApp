@@ -6,11 +6,16 @@
 enum EventKind {
   Concert = "concert",
   Festival = "festival",
-  Sports = "sports"
+  Sports = "sports",
+  Theater = "theater",
+  Conference = "conference",
+  Wedding = "wedding",
+  Museum = "museum",
+  Other = "other"
 }
 
 // Definitive behavior;
-type EventType = { kind: EventKind.Concert } | { kind: EventKind.Festival; dateRange: [string, string] } | { kind: EventKind.Sports }
+type EventType = { kind: EventKind.Concert } | { kind: EventKind.Festival; dateRange: [string, string] } | { kind: EventKind.Sports } | { kind: EventKind.Theater } | { kind: EventKind.Conference } | { kind: EventKind.Wedding } | { kind: EventKind.Museum } | { kind: EventKind.Other }
 
 // Allows for partial updates on EventType
 type EventTypeUpdate = Partial<{ dateRange: [string, string] }>
@@ -300,7 +305,7 @@ function viewEventType(events: AppEvent[], kind: EventKind): void {
 
   const eventTypes = events.map(event => event.type?.kind)
 
-  const emojis = kind === EventKind.Concert ? ["🎵", "🎸"] : kind === EventKind.Sports ? ["💪", "🎽"] : ["🎶✨", "🎤🎉"]
+  const emojis = kind === EventKind.Concert ? ["🎵", "🎸"] : kind === EventKind.Sports ? ["💪", "🎽"] : kind === EventKind.Festival ? ["🎶✨", "🎤🎉"] : kind === EventKind.Theater ? ["🎭", "🎬"] : kind === EventKind.Conference ? ["🗣", "💬 "] : kind === EventKind.Wedding ? ["👰🏻🤵🏻", "🥂"] : kind === EventKind.Museum ? ["🏛️", "🖼️"] : ["⭐⭐", "☀️☀️"]
 
   console.log(`\nFiltering by "${kind}"...`)
   const eventType = events.filter(event => event.type?.kind === kind)
@@ -308,6 +313,11 @@ function viewEventType(events: AppEvent[], kind: EventKind): void {
   switch (kind) {
     case EventKind.Concert:
     case EventKind.Sports:
+    case EventKind.Theater:
+    case EventKind.Conference:
+    case EventKind.Wedding:
+    case EventKind.Museum:
+    case EventKind.Other:
       eventType.forEach((event, index) => {
         const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1]
         console.log(`${eventEmoji} ${event.name} -- ${event.date}`)
@@ -332,7 +342,7 @@ function viewEventType(events: AppEvent[], kind: EventKind): void {
 viewEventType(eventDatabase, EventKind.Concert)
 viewEventType(eventDatabase, EventKind.Sports)
 viewEventType(eventDatabase, EventKind.Festival)
-// viewEventType(eventDatabase, "theater")
+viewEventType(eventDatabase, EventKind.Theater)
 // viewEventType(eventDatabase, "technology")
 
 // Get Event by ID

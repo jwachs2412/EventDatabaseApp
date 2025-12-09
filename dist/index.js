@@ -9,6 +9,11 @@ var EventKind;
     EventKind["Concert"] = "concert";
     EventKind["Festival"] = "festival";
     EventKind["Sports"] = "sports";
+    EventKind["Theater"] = "theater";
+    EventKind["Conference"] = "conference";
+    EventKind["Wedding"] = "wedding";
+    EventKind["Museum"] = "museum";
+    EventKind["Other"] = "other";
 })(EventKind || (EventKind = {}));
 // Event Database Array
 let eventDatabase = [
@@ -233,12 +238,17 @@ function viewEventType(events, kind) {
         return;
     }
     const eventTypes = events.map(event => event.type?.kind);
-    const emojis = kind === EventKind.Concert ? ["🎵", "🎸"] : kind === EventKind.Sports ? ["💪", "🎽"] : ["🎶✨", "🎤🎉"];
+    const emojis = kind === EventKind.Concert ? ["🎵", "🎸"] : kind === EventKind.Sports ? ["💪", "🎽"] : kind === EventKind.Festival ? ["🎶✨", "🎤🎉"] : kind === EventKind.Theater ? ["🎭", "🎬"] : kind === EventKind.Conference ? ["🗣", "💬 "] : kind === EventKind.Wedding ? ["👰🏻🤵🏻", "🥂"] : kind === EventKind.Museum ? ["🏛️", "🖼️"] : ["⭐⭐", "☀️☀️"];
     console.log(`\nFiltering by "${kind}"...`);
     const eventType = events.filter(event => event.type?.kind === kind);
     switch (kind) {
         case EventKind.Concert:
         case EventKind.Sports:
+        case EventKind.Theater:
+        case EventKind.Conference:
+        case EventKind.Wedding:
+        case EventKind.Museum:
+        case EventKind.Other:
             eventType.forEach((event, index) => {
                 const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1];
                 console.log(`${eventEmoji} ${event.name} -- ${event.date}`);
@@ -261,7 +271,7 @@ function viewEventType(events, kind) {
 viewEventType(eventDatabase, EventKind.Concert);
 viewEventType(eventDatabase, EventKind.Sports);
 viewEventType(eventDatabase, EventKind.Festival);
-// viewEventType(eventDatabase, "theater")
+viewEventType(eventDatabase, EventKind.Theater);
 // viewEventType(eventDatabase, "technology")
 // Get Event by ID
 function getEventById(eventId) {
