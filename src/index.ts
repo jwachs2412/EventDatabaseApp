@@ -296,6 +296,22 @@ function assertFestival(event: AppEvent): asserts event is AppEvent & {
   }
 }
 
+// Assertion Function
+function assertFestivalDateRange(type: EventType): asserts type is EventType & {
+  kind: EventKind.Festival
+  dateRange: [string, string]
+} {
+  if (type.kind === EventKind.Festival) {
+    if (!("dateRange" in type)) {
+      throw new Error("Festival is missing dateRange.")
+    }
+  } else {
+    if ("dateRange" in type) {
+      throw new Error("Only festivals can include a dateRange.")
+    }
+  }
+}
+
 // View Events by Type
 function viewEventType(events: AppEvent[], kind: EventKind): void {
   if (events.length === 0) {
@@ -459,6 +475,7 @@ console.log(eventNamePattern)
 // Backend / API Layer
 namespace EventService {
   export function addEvent(event: NewEventInput): Result<readonly AppEvent[]> {
+    assertFestivalDateRange(event.type)
     const lastEvent = eventDatabase[eventDatabase.length - 1]
     const newId = (lastEvent?.id ?? 0) + 1
 
@@ -480,4 +497,45 @@ namespace EventService {
     eventDatabase = eventDatabase.filter(e => e.id !== id)
     return eventDatabase
   }
+
+  console.log("Before addEvent:", eventDatabase)
+
+  const result = addEvent({
+    type: { kind: EventKind.Festival, dateRange: ["9/12/2011", "9/14/2011"] },
+    name: "Phases of the Moon",
+    notes: "Flooding happened pre-festival causing a 12 hour delay getting into the campground."
+  })
+
+  console.log("Result:", result)
+
+  // addEvent({
+  //   type: { kind: EventKind.Festival },
+  //   name: "Forecastle Festival",
+  //   notes: "Super hot but a lot of fun"
+  // })
+
+  // addEvent({
+  //   type: { kind: EventKind.Concert, dateRange: ["9/12/2021", "9/14/2021"] },
+  //   name: "Phish",
+  //   notes: "Trey was on another level for this one."
+  // })
+
+  const resultTwo = addEvent({
+    type: { kind: EventKind.Concert },
+    name: "Phish",
+    date: "7/12/2023",
+    notes: "Fishman messed up on drums."
+  })
+
+  console.log("ResultTwo:", resultTwo)
+
+  const resultThree = addEvent({
+    type: { kind: EventKind.Other },
+    name: "Tech Event",
+    notes: "They had good snacks there."
+  })
+
+  console.log("ResultThree:", resultThree)
+
+  console.log("After addEvent:", eventDatabase)
 }
