@@ -17,9 +17,6 @@ enum EventKind {
 // Definitive behavior;
 type EventType = { kind: EventKind.Concert } | { kind: EventKind.Festival; dateRange: [string, string] } | { kind: EventKind.Sports } | { kind: EventKind.Theater } | { kind: EventKind.Conference } | { kind: EventKind.Wedding } | { kind: EventKind.Museum } | { kind: EventKind.Other }
 
-// Allows for partial updates on EventType
-type EventTypeUpdate = Partial<{ dateRange: [string, string] }>
-
 // Advantage is compiler catches the error
 type Result<T> = { ok: true; data: T } | { ok: false; error: string }
 
@@ -33,6 +30,12 @@ type AppEvent = {
   seat?: number | string
   notes?: string
 }
+
+type NonFestivalUpdate = { dateRange?: never }
+type FestivalUpdate = { dateRange: [string, string] }
+
+// Allows for partial updates on EventType
+type EventTypeUpdate = NonFestivalUpdate | FestivalUpdate
 
 type NewEventInput = Omit<AppEvent, "id">
 
@@ -91,7 +94,6 @@ async function showEvents(): Promise<void> {
 
   console.log("Finished attempting to load all events in the database.")
 }
-showEvents()
 
 // Fetch events concurrently
 async function fetchEventsConcurrently(ids: number[]): Promise<AppEvent[]> {
@@ -539,3 +541,5 @@ namespace EventService {
 
   console.log("After addEvent:", eventDatabase)
 }
+
+showEvents()

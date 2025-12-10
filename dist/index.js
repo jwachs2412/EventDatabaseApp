@@ -56,7 +56,6 @@ async function showEvents() {
     console.log(result.data);
     console.log("Finished attempting to load all events in the database.");
 }
-showEvents();
 // Fetch events concurrently
 async function fetchEventsConcurrently(ids) {
     const promises = ids.map(id => fetchEventByID(id));
@@ -420,4 +419,5 @@ var EventService;
     console.log("ResultThree:", resultThree);
     console.log("After addEvent:", eventDatabase);
 })(EventService || (EventService = {}));
+showEvents();
 //# sourceMappingURL=index.js.map
