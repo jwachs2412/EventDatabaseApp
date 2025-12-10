@@ -403,8 +403,10 @@ type EditableEventFields = {
   [K in keyof AppEvent as K extends "id" ? never : K]: AppEvent[K]
 }
 
+type EventFieldUpdate = Partial<Omit<EditableEventFields, "type">>
+
 // Edit Single Event - keeping Partial in there as a helper - makes all Event props optional for update - refactor below function at some point, removing the if statements and replacing with less code
-function editEvent(eventID: number, updates: Partial<Omit<EditableEventFields, "type">> & { type?: EventTypeUpdate }): Result<AppEvent> {
+function editEvent(eventID: number, updates: EventFieldUpdate & { type?: EventTypeUpdate }): Result<AppEvent> {
   const eventToEdit = getEventById(eventID)
   if (!eventToEdit) {
     return { ok: false, error: `Event id: ${eventID} was not found.` }
