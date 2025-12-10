@@ -314,6 +314,32 @@ function assertFestivalDateRange(type: EventType): asserts type is EventType & {
   }
 }
 
+// Validate New Event
+function validateNewEvent(event: NewEventInput): void {
+  if (!event.name || event.name.trim().length === 0) {
+    throw new Error("You must enter a name for your event.")
+  }
+
+  if (event.date) {
+    if (!isValidDate(event.date)) {
+      throw new Error("You must enter a valid date (ie - 1/1/2025).")
+    }
+  }
+
+  if (event.type.kind === EventKind.Festival) {
+    const range = event.type.dateRange
+    if (!range) throw new Error("You must enter a valid date range for a festival event.")
+
+    const [startStr, endStr] = range
+    if (!isValidDate(startStr)) throw new Error("Your start date must be valid (ie - 1/1/2025).")
+    if (!isValidDate(endStr)) throw new Error("Your end date must be valid (ie - 1/3/2025).")
+
+    const start = new Date(startStr)
+    const end = new Date(endStr)
+    if (start > end) throw new Error("Festival start date must be before the end date.")
+  }
+}
+
 // View Events by Type
 function viewEventType(events: AppEvent[], kind: EventKind): void {
   if (events.length === 0) {
@@ -479,6 +505,7 @@ console.log(eventNamePattern)
 // Backend / API Layer
 namespace EventService {
   export function addEvent(event: NewEventInput): Result<readonly AppEvent[]> {
+    validateNewEvent(event)
     assertFestivalDateRange(event.type)
     const lastEvent = eventDatabase[eventDatabase.length - 1]
     const newId = (lastEvent?.id ?? 0) + 1
