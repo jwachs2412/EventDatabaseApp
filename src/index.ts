@@ -257,8 +257,35 @@ function listEvents(events: AppEvent[]) {
 
 listEvents(eventDatabase)
 
+// Hybrid Type
+type EventWithSummary = {
+  event: AppEvent
+  summary: string
+  log(): void
+}
+
+// Single Event Summary
+function createEventSummaryHelper(e: AppEvent): EventWithSummary {
+  return {
+    event: e,
+    summary: `${e.name} - ${e.type.kind}`,
+    log() {
+      console.log(this.summary)
+    }
+  }
+}
+
+const sampleEvent = {
+  id: 1,
+  name: "Rock Festival",
+  type: { kind: EventKind.Festival, dateRange: ["7/8/2001", "7/10/2001"] }
+} satisfies AppEvent
+
+const helper = createEventSummaryHelper(sampleEvent)
+helper.log()
+
 // Get Event Summary
-function getEventSummary(events: AppEvent[]): void {
+function getEventsSummary(events: AppEvent[]): void {
   if (events.length === 0) {
     console.log("There are no events...")
     return
@@ -287,7 +314,7 @@ function getEventSummary(events: AppEvent[]): void {
   console.log(`Events with notes: ${notesCount}`)
 }
 
-getEventSummary(eventDatabase)
+getEventsSummary(eventDatabase)
 
 // Assertion Function
 function assertFestival(event: AppEvent): asserts event is AppEvent & {

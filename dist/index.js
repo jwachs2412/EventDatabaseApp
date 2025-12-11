@@ -196,8 +196,25 @@ function listEvents(events) {
     }
 }
 listEvents(eventDatabase);
+// Single Event Summary
+function createEventSummaryHelper(e) {
+    return {
+        event: e,
+        summary: `${e.name} - ${e.type.kind}`,
+        log() {
+            console.log(this.summary);
+        }
+    };
+}
+const sampleEvent = {
+    id: 1,
+    name: "Rock Festival",
+    type: { kind: EventKind.Festival, dateRange: ["7/8/2001", "7/10/2001"] }
+};
+const helper = createEventSummaryHelper(sampleEvent);
+helper.log();
 // Get Event Summary
-function getEventSummary(events) {
+function getEventsSummary(events) {
     if (events.length === 0) {
         console.log("There are no events...");
         return;
@@ -223,7 +240,7 @@ function getEventSummary(events) {
     // Show Number of Events That Contain Notes
     console.log(`Events with notes: ${notesCount}`);
 }
-getEventSummary(eventDatabase);
+getEventsSummary(eventDatabase);
 // Assertion Function
 function assertFestival(event) {
     if (event.type.kind !== EventKind.Festival || !event.type.dateRange) {
