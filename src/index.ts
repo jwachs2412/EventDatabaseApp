@@ -425,7 +425,7 @@ console.log(`\nHere is the event you wanted to view by ID:`)
 console.log(getEventById(3))
 
 // View Single Event
-function viewEvent(id: number): void {
+function viewEvent(id: number, container: HTMLElement | null): void {
   const singleEvent = getEventById(id)
 
   if (!singleEvent) {
@@ -437,19 +437,21 @@ function viewEvent(id: number): void {
 
   const dateDisplay = singleEvent.type.kind === EventKind.Festival ? singleEvent.type.dateRange?.join(" - ") ?? "Date range unavailable" : singleEvent.date ?? "Date unavailable"
 
-  console.log("\nHere is the event you were looking for:\n")
-
-  console.log(
-    `Event Type: ${formattedKind}
-Event: ${singleEvent.name ?? "Unnamed Event"}
-Date(s): ${dateDisplay}
-Seat: ${singleEvent.seat ?? "N/A"}
-Row: ${singleEvent.row ?? "N/A"}
-Event Notes: ${singleEvent.notes ?? "N/A"}\n`
-  )
+  if (container) {
+    container.innerHTML = `
+    <h1 class="toUpper">Event Requested</h1>\n
+    <h2>Event Type: ${formattedKind}</h2>
+<p><strong>Event:</strong> ${singleEvent.name ?? "Unnamed Event"}</p>
+<p><strong>Date(s):</strong> ${dateDisplay}</p>
+<p><strong>Seat:</strong> ${singleEvent.seat ?? "N/A"}</p>
+<p><strong>Row:</strong> ${singleEvent.row ?? "N/A"}</p>
+<p><strong>Event Notes:</strong> ${singleEvent.notes ?? "N/A"}</p>
+`
+  }
 }
 
-viewEvent(2)
+const container: HTMLElement | null = document.getElementById("event-view")
+viewEvent(2, container)
 
 // Mapped Type to make sure ID can't be edited
 type EditableEventFields = {

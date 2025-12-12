@@ -1,9 +1,7 @@
-"use strict";
 // TODO: Add persistent storage instead of in-memory DB
 // TODO: Add validation for event input
 // TODO: Add delete confirmation flow
 // TODO: Add sorting and pagination
-Object.defineProperty(exports, "__esModule", { value: true });
 var EventKind;
 (function (EventKind) {
     EventKind["Concert"] = "concert";
@@ -334,7 +332,7 @@ function getEventById(eventId) {
 console.log(`\nHere is the event you wanted to view by ID:`);
 console.log(getEventById(3));
 // View Single Event
-function viewEvent(id) {
+function viewEvent(id, container) {
     const singleEvent = getEventById(id);
     if (!singleEvent) {
         console.log(`❌ No event found with ID: ${id}\n`);
@@ -342,15 +340,20 @@ function viewEvent(id) {
     }
     const formattedKind = singleEvent.type?.kind ? singleEvent.type.kind.charAt(0).toUpperCase() + singleEvent.type.kind.slice(1) : "Unknown";
     const dateDisplay = singleEvent.type.kind === EventKind.Festival ? singleEvent.type.dateRange?.join(" - ") ?? "Date range unavailable" : singleEvent.date ?? "Date unavailable";
-    console.log("\nHere is the event you were looking for:\n");
-    console.log(`Event Type: ${formattedKind}
-Event: ${singleEvent.name ?? "Unnamed Event"}
-Date(s): ${dateDisplay}
-Seat: ${singleEvent.seat ?? "N/A"}
-Row: ${singleEvent.row ?? "N/A"}
-Event Notes: ${singleEvent.notes ?? "N/A"}\n`);
+    if (container) {
+        container.innerHTML = `
+    <h1 class="toUpper">Event Requested</h1>\n
+    <h2>Event Type: ${formattedKind}</h2>
+<p><strong>Event:</strong> ${singleEvent.name ?? "Unnamed Event"}</p>
+<p><strong>Date(s):</strong> ${dateDisplay}</p>
+<p><strong>Seat:</strong> ${singleEvent.seat ?? "N/A"}</p>
+<p><strong>Row:</strong> ${singleEvent.row ?? "N/A"}</p>
+<p><strong>Event Notes:</strong> ${singleEvent.notes ?? "N/A"}</p>
+`;
+    }
 }
-viewEvent(2);
+const container = document.getElementById("event-view");
+viewEvent(2, container);
 // Edit Single Event - keeping Partial in there as a helper - makes all Event props optional for update - refactor below function at some point, removing the if statements and replacing with less code
 function editEvent(eventID, updates) {
     const eventToEdit = getEventById(eventID);
@@ -463,4 +466,5 @@ var EventService;
     console.log("After addEvent:", eventDatabase);
 })(EventService || (EventService = {}));
 showEvents();
+export {};
 //# sourceMappingURL=index.js.map
