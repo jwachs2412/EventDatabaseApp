@@ -328,48 +328,59 @@ function validateNewEvent(event) {
             throw new Error("Festival start date must be before the end date.");
     }
 }
-// View Events by Type
-function viewEventType(events, kind) {
+function viewEventType(events, arg) {
+    const options = typeof arg === "object" ? arg : { kind: arg };
+    const { kind, showDates = true, showEmojis = true } = options;
     if (events.length === 0) {
         console.log(`No events found.`);
         return;
     }
     // const eventTypes = events.map(event => event.type?.kind)
-    const emojis = kind === EventKind.Concert ? ["🎵", "🎸"] : kind === EventKind.Sports ? ["💪", "🎽"] : kind === EventKind.Festival ? ["🎶✨", "🎤🎉"] : kind === EventKind.Theater ? ["🎭", "🎬"] : kind === EventKind.Conference ? ["🗣", "💬 "] : kind === EventKind.Wedding ? ["👰🏻🤵🏻", "🥂"] : kind === EventKind.Museum ? ["🏛️", "🖼️"] : ["⭐⭐", "☀️☀️"];
+    const emojiSet = kind === EventKind.Concert ? ["🎵", "🎸"] : kind === EventKind.Sports ? ["💪", "🎽"] : kind === EventKind.Festival ? ["🎶✨", "🎤🎉"] : kind === EventKind.Theater ? ["🎭", "🎬"] : kind === EventKind.Conference ? ["🗣", "💬 "] : kind === EventKind.Wedding ? ["👰🏻🤵🏻", "🥂"] : kind === EventKind.Museum ? ["🏛️", "🖼️"] : ["⭐⭐", "☀️☀️"];
     console.log(`\nFiltering by "${kind}"...`);
     const eventType = events.filter(event => event.type?.kind === kind);
-    switch (kind) {
-        case EventKind.Concert:
-        case EventKind.Sports:
-        case EventKind.Theater:
-        case EventKind.Conference:
-        case EventKind.Wedding:
-        case EventKind.Museum:
-        case EventKind.Other:
-            eventType.forEach((event, index) => {
-                const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1];
-                console.log(`${eventEmoji} ${event.name} -- ${event.date}`);
-            });
-            return;
-        case EventKind.Festival:
-            eventType.forEach((event, index) => {
-                const eventEmoji = index % 2 === 0 ? emojis[0] : emojis[1];
-                assertFestival(event);
-                const [startDate, endDate] = event.type.dateRange;
-                console.log(`${eventEmoji} ${event.name} -- ${startDate} - ${endDate}`);
-            });
-            return;
-        default: {
-            const _exhaustive = kind;
-            throw new Error(`Unhandled EventKind: ${_exhaustive}`);
+    eventType.forEach((event, index) => {
+        const emoji = showEmojis ? emojiSet[index % 2] : "";
+        if (kind === EventKind.Festival) {
+            assertFestival(event);
+            const [start, end] = event.type.dateRange;
+            console.log(`${emoji} ${event.name} -- ${start} - ${end}`);
         }
-    }
+        else {
+            console.log(`${emoji} ${event.name}${showDates ? ` -- ${event.date}` : ""}`);
+        }
+    });
+    // switch (kind) {
+    //   case EventKind.Concert:
+    //   case EventKind.Sports:
+    //   case EventKind.Theater:
+    //   case EventKind.Conference:
+    //   case EventKind.Wedding:
+    //   case EventKind.Museum:
+    //   case EventKind.Other:
+    //     eventType.forEach((event, index) => {
+    //       const eventEmoji = index % 2 === 0 ? emojiSet[0] : emojiSet[1]
+    //       console.log(`${eventEmoji} ${event.name}${showDates ? ` -- ${event.date}` : ""}`)
+    //     })
+    //     return
+    //   case EventKind.Festival:
+    //     eventType.forEach((event, index) => {
+    //       const eventEmoji = index % 2 === 0 ? emojiSet[0] : emojiSet[1]
+    //       assertFestival(event)
+    //       const [startDate, endDate] = event.type.dateRange
+    //       console.log(`${eventEmoji} ${event.name} -- ${startDate} - ${endDate}`)
+    //     })
+    //     return
+    //   default: {
+    //     const _exhaustive: never = kind
+    //     throw new Error(`Unhandled EventKind: ${_exhaustive}`)
+    //   }
+    // }
 }
 viewEventType(eventDatabase, EventKind.Concert);
 viewEventType(eventDatabase, EventKind.Sports);
 viewEventType(eventDatabase, EventKind.Festival);
-viewEventType(eventDatabase, EventKind.Theater);
-// viewEventType(eventDatabase, "technology")
+// viewEventType(eventDatabase, EventKind.Theater)
 // Get Event by ID
 function getEventById(eventId) {
     return eventDatabase.find(event => event.id === eventId);
