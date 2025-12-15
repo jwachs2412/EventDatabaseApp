@@ -26,21 +26,66 @@ function delay(ms) {
         setTimeout(resolve, ms);
     });
 }
-// Sort events
-function sortEventsByName(sortDirection) {
+// Sort events sortDirection: "asc" | "desc", container: HTMLElement | null
+function sortEventsByKind(elementId) {
     const allEvents = eventDatabase;
     if (allEvents.length === 0) {
         return { ok: false, error: `No events found` };
     }
-    // function should return negative number (a before b), 0 (a equals b), positive number (a comes after b); localeCompare - string method that compares 2 strings according to alphabetical order
-    allEvents.sort((a, b) => a.name.localeCompare(b.name));
-    if (sortDirection === "desc") {
-        allEvents.reverse();
+    const dropdownOpts = [
+        { value: "asc", text: "Ascending" },
+        { value: "desc", text: "Descending" }
+    ];
+    const sortContainer = document.getElementById("sort-container");
+    const dropdownContainer = document.getElementById("dropdown-container");
+    if (!dropdownContainer || !sortContainer) {
+        // throw new Error(`Container with ID "${elementId}" not found.`)
+        return { ok: false, error: `Container with ID "${elementId}" not found.` };
     }
+    // ---- CREATE SELECT ONCE ----
+    const selectElement = document.createElement("select");
+    selectElement.id = "direction-selector";
+    selectElement.name = "direction";
+    dropdownOpts.forEach(optionData => {
+        const optionElement = document.createElement("option");
+        optionElement.value = optionData.value;
+        optionElement.textContent = optionData.text;
+        selectElement.appendChild(optionElement);
+    });
+    dropdownContainer.appendChild(selectElement);
+    // ---- RENDER HELPER ----
+    function render(list, title) {
+        let html = `<h2>${title}</h2><ul>`;
+        list.forEach(event => {
+            const kind = event.type.kind;
+            const date = kind === EventKind.Festival ? `${event.type.dateRange[0]} - ${event.type.dateRange[1]}` : event.date;
+            html += `<li>${kind} - ${event.name} - ${date}</li>`;
+        });
+        html += "</ul>";
+        sortContainer.innerHTML = html;
+    }
+    // ---- DEFAULT SORT (ASC) ----
+    allEvents.sort((a, b) => a.type.kind.localeCompare(b.type.kind));
+    render(allEvents, "Events List");
+    // ---- EVENT LISTENER (THIS IS WHERE SORTING HAPPENS) ----
+    selectElement.addEventListener("change", event => {
+        const target = event.target;
+        const direction = target.value;
+        console.log("Selected direction:", direction);
+        if (direction === "desc") {
+            allEvents.sort((a, b) => b.type.kind.localeCompare(a.type.kind));
+            render(allEvents, "Reversed Events List");
+        }
+        else {
+            allEvents.sort((a, b) => a.type.kind.localeCompare(b.type.kind));
+            render(allEvents, "Events List");
+        }
+    });
     return { ok: true, data: allEvents };
 }
-console.log(sortEventsByName("asc"));
-console.log(sortEventsByName("desc"));
+const sortContainer = document.getElementById("sort-container");
+sortEventsByKind(sortContainer);
+// sortEventsByKind("desc", sortContainer)
 // Show all events in database; combines async fetching with try/catch/finally - good because readability, error safety, reliable thanks to finally, easily maintainable
 async function showEvents() {
     console.log("Loading events...");
