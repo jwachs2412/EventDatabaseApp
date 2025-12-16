@@ -340,30 +340,39 @@ helper.log()
 
 // Get Event Summary
 function getEventsSummary(events: AppEvent[]): void {
+  // Exit early if there are no events to summarize
   if (events.length === 0) {
     console.log("There are no events...")
     return
   }
 
+  // Count and display the total number of events
   const totalEvents = events.length
-  // Show total number of events attended
   console.log(`Total Events: ${totalEvents}`)
 
-  const eventTypes = events.map(event => event.type)
-  const counts: { [key: string]: number } = {}
-  for (const event of eventTypes) {
-    if (!event.kind) continue
-    counts[event.kind] = (counts[event.kind] ?? 0) + 1
+  // Object to track how many times each EventKind appears
+  // Partial allows keys to be added dynamically
+  const counts: Partial<Record<EventKind, number>> = {}
+
+  // Loop through each event and increment its EventKind count
+  for (const event of events) {
+    const kind = event.type.kind
+    counts[kind] = (counts[kind] ?? 0) + 1
   }
-  const eventsAttended = Object.keys(counts).map(key => {
-    return `${key.charAt(0).toUpperCase() + key.slice(1)}: ${counts[key]}`
+
+  // Convert counts object into a readable summary
+  const eventsAttended = (Object.keys(counts) as EventKind[]).map(kind => {
+    return `${kind.charAt(0).toUpperCase() + kind.slice(1)}: ${counts[kind]}`
   })
+
+  // Join all summaries into a single display string
   const eventsAttendedSummary = eventsAttended.join(" | ")
-  // Show Summary of Events
   console.log(eventsAttendedSummary)
 
+  // Find and count events that include notes
   const eventNotes = events.filter(event => event.notes)
   const notesCount = eventNotes.length
+
   // Show Number of Events That Contain Notes
   console.log(`Events with notes: ${notesCount}`)
 }
@@ -459,35 +468,6 @@ function viewEventType(events: AppEvent[], arg: EventKind | ViewEventOptions): v
       console.log(`${emoji} ${event.name}${showDates ? ` -- ${event.date}` : ""}`)
     }
   })
-
-  // switch (kind) {
-  //   case EventKind.Concert:
-  //   case EventKind.Sports:
-  //   case EventKind.Theater:
-  //   case EventKind.Conference:
-  //   case EventKind.Wedding:
-  //   case EventKind.Museum:
-  //   case EventKind.Other:
-  //     eventType.forEach((event, index) => {
-  //       const eventEmoji = index % 2 === 0 ? emojiSet[0] : emojiSet[1]
-  //       console.log(`${eventEmoji} ${event.name}${showDates ? ` -- ${event.date}` : ""}`)
-  //     })
-  //     return
-  //   case EventKind.Festival:
-  //     eventType.forEach((event, index) => {
-  //       const eventEmoji = index % 2 === 0 ? emojiSet[0] : emojiSet[1]
-
-  //       assertFestival(event)
-  //       const [startDate, endDate] = event.type.dateRange
-  //       console.log(`${eventEmoji} ${event.name} -- ${startDate} - ${endDate}`)
-  //     })
-  //     return
-
-  //   default: {
-  //     const _exhaustive: never = kind
-  //     throw new Error(`Unhandled EventKind: ${_exhaustive}`)
-  //   }
-  // }
 }
 viewEventType(eventDatabase, EventKind.Concert)
 viewEventType(eventDatabase, EventKind.Sports)
