@@ -338,43 +338,32 @@ const sampleEvent = {
 const helper = createEventSummaryHelper(sampleEvent)
 helper.log()
 
-// Get Event Summary
-function getEventsSummary(events: AppEvent[]): void {
-  // Exit early if there are no events to summarize
-  if (events.length === 0) {
-    console.log("There are no events...")
-    return
-  }
+// UI-Friendly Events Summary
+type EventsSummary = {
+  totalEvents: number
+  countsByKind: Partial<Record<EventKind, number>>
+  notesCount: number
+}
 
+// Get Event Summary
+function getEventsSummary(events: AppEvent[]): EventsSummary {
   // Count and display the total number of events
   const totalEvents = events.length
-  console.log(`Total Events: ${totalEvents}`)
 
   // Object to track how many times each EventKind appears
   // Partial allows keys to be added dynamically
-  const counts: Partial<Record<EventKind, number>> = {}
+  const countsByKind: Partial<Record<EventKind, number>> = {}
 
   // Loop through each event and increment its EventKind count
   for (const event of events) {
     const kind = event.type.kind
-    counts[kind] = (counts[kind] ?? 0) + 1
+    countsByKind[kind] = (countsByKind[kind] ?? 0) + 1
   }
 
-  // Convert counts object into a readable summary
-  const eventsAttended = (Object.keys(counts) as EventKind[]).map(kind => {
-    return `${kind.charAt(0).toUpperCase() + kind.slice(1)}: ${counts[kind]}`
-  })
-
-  // Join all summaries into a single display string
-  const eventsAttendedSummary = eventsAttended.join(" | ")
-  console.log(eventsAttendedSummary)
-
   // Find and count events that include notes
-  const eventNotes = events.filter(event => event.notes)
-  const notesCount = eventNotes.length
+  const notesCount = events.filter(event => event.notes).length
 
-  // Show Number of Events That Contain Notes
-  console.log(`Events with notes: ${notesCount}`)
+  return { totalEvents, countsByKind, notesCount }
 }
 
 getEventsSummary(eventDatabase)
