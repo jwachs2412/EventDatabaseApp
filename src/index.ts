@@ -437,6 +437,7 @@ type ViewEventOptions = {
   showEmojis?: boolean
 }
 
+// This function converts raw domain data into UI-ready view models. It’s pure, predictable, and returns exactly what a React component needs — no more, no less.
 // Transforms raw AppEvent data into UI-ready view models
 function getEventsByKindViewModel(events: readonly AppEvent[], options: ViewEventOptions): EventViewRow[] {
   // The readonly prevents accidental mutation of the input array
