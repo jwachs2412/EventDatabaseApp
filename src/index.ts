@@ -419,49 +419,75 @@ function validateNewEvent(event: NewEventInput): void {
   }
 }
 
-// Used for overloading with options
+// A "view model" type — this is NOT the domain model (AppEvent)
+// This represents exactly what the UI needs to render a row
+// This will be props for a future React <EventRow /> component
+type EventViewRow = {
+  id: number
+  name: string
+  emoji: string
+  dateText: string
+}
+
+// Options object used to control how the view model is built
+// (classic "options object" pattern)
 type ViewEventOptions = {
   kind: EventKind
   showDates?: boolean
   showEmojis?: boolean
 }
 
-// View Events by Type
-function viewEventType(events: AppEvent[], options: ViewEventOptions): void
-function viewEventType(events: AppEvent[], kind: EventKind): void
-function viewEventType(events: AppEvent[], arg: EventKind | ViewEventOptions): void {
-  const options = typeof arg === "object" ? arg : { kind: arg }
+// Transforms raw AppEvent data into UI-ready view models
+function getEventsByKindViewModel(events: readonly AppEvent[], options: ViewEventOptions): EventViewRow[] {
+  // The readonly prevents accidental mutation of the input array
 
+  // Destructure options and provide default values
+  // This ensures the function behaves consistently even if options are partial
   const { kind, showDates = true, showEmojis = true } = options
 
-  if (events.length === 0) {
-    console.log(`No events found.`)
-    return
-  }
+  // Select an emoji pair based on the event kind
+  const emojiSet = kind === EventKind.Concert ? ["🎵", "🎸"] : kind === EventKind.Sports ? ["💪", "🎽"] : kind === EventKind.Festival ? ["🎶✨", "🎤🎉"] : kind === EventKind.Theater ? ["🎭", "🎬"] : kind === EventKind.Conference ? ["🗣", "💬"] : kind === EventKind.Wedding ? ["👰🏻🤵🏻", "🥂"] : kind === EventKind.Museum ? ["🏛️", "🖼️"] : ["⭐", "✨"]
 
-  // const eventTypes = events.map(event => event.type?.kind)
+  // Step 1: Filter events down to only the requested kind
+  // Step 2: Map each event into a UI-friendly EventViewRow
+  return events
+    .filter(event => event.type.kind === kind)
+    .map((event, index) => {
+      // Pick an emoji if emojis are enabled
+      // index % 2 alternates between the two emoji options
+      // `?? ""` guarantees a string which is important for React rendering
+      const emoji = showEmojis ? emojiSet[index % 2] ?? "" : ""
 
-  const emojiSet = kind === EventKind.Concert ? ["🎵", "🎸"] : kind === EventKind.Sports ? ["💪", "🎽"] : kind === EventKind.Festival ? ["🎶✨", "🎤🎉"] : kind === EventKind.Theater ? ["🎭", "🎬"] : kind === EventKind.Conference ? ["🗣", "💬 "] : kind === EventKind.Wedding ? ["👰🏻🤵🏻", "🥂"] : kind === EventKind.Museum ? ["🏛️", "🖼️"] : ["⭐⭐", "☀️☀️"]
+      // Festival events require special handling due to date ranges
+      if (kind === EventKind.Festival) {
+        // Assertion narrows the type so dateRange is guaranteed to exist
+        assertFestival(event)
+        // Destructure the start and end dates from the festival date range
+        const [start, end] = event.type.dateRange
+        // Return a fully UI-safe view model
+        return {
+          id: event.id,
+          name: event.name,
+          emoji,
+          dateText: `${start} - ${end}`
+        }
+      }
 
-  console.log(`\nFiltering by "${kind}"...`)
-  const eventType = events.filter(event => event.type?.kind === kind)
-
-  eventType.forEach((event, index) => {
-    const emoji = showEmojis ? emojiSet[index % 2] : ""
-
-    if (kind === EventKind.Festival) {
-      assertFestival(event)
-      const [start, end] = event.type.dateRange
-      console.log(`${emoji} ${event.name} -- ${start} - ${end}`)
-    } else {
-      console.log(`${emoji} ${event.name}${showDates ? ` -- ${event.date}` : ""}`)
-    }
-  })
+      // Non-festival events use a single date (if available)
+      return {
+        id: event.id,
+        name: event.name,
+        emoji,
+        // Conditionally include the date based on UI options
+        // Always returns a string to keep rendering predictable
+        dateText: showDates ? event.date ?? "" : ""
+      }
+    })
 }
-viewEventType(eventDatabase, EventKind.Concert)
-viewEventType(eventDatabase, EventKind.Sports)
-viewEventType(eventDatabase, EventKind.Festival)
-// viewEventType(eventDatabase, EventKind.Theater)
+getEventsByKindViewModel(eventDatabase, { kind: EventKind.Concert })
+getEventsByKindViewModel(eventDatabase, { kind: EventKind.Sports })
+getEventsByKindViewModel(eventDatabase, { kind: EventKind.Festival })
+// viewEventType(eventDatabase, {kind: EventKind.Theater})
 
 // Get Event by ID
 function getEventById(eventId: number): AppEvent | undefined {
