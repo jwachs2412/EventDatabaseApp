@@ -332,16 +332,47 @@ addEventAsync({
   notes: "Guardians won 10-9"
 })
 
-// List All Events
-function listEvents(events: AppEvent[]) {
-  console.log("\nList of All Events You Have Attended:\n")
-
-  for (const currentEvent of events) {
-    console.log(`Event Type: ${currentEvent.type.kind.charAt(0).toUpperCase() + currentEvent.type.kind.slice(1)}\nEvent: ${currentEvent.name.charAt(0).toUpperCase() + currentEvent.name.slice(1)}\nDate(s): ${currentEvent.date}${currentEvent.seat ? `\nSeat: ${currentEvent.seat}` : ""}${currentEvent.row ? `\nRow: ${currentEvent.row}` : ""}${currentEvent.notes ? `\nEvent Notes: ${currentEvent.notes}` : ""}\n`)
-  }
+// Helper for listing events
+type EventDetailView = {
+  id: number
+  kindLabel: string
+  name: string
+  dateText: string
+  seat?: string | number
+  row?: string | number
+  notes?: string
 }
 
-listEvents(eventDatabase)
+function getEventDateText(event: AppEvent): string {
+  if (event.type.kind === EventKind.Festival) {
+    const [start, end] = event.type.dateRange
+    return `${start} - ${end}`
+  }
+
+  return event.date ?? ""
+}
+
+// Build the event detail view
+function buildEventDetailView(event: AppEvent): EventDetailView {
+  const view: EventDetailView = {
+    id: event.id,
+    kindLabel: event.type.kind,
+    name: event.name,
+    dateText: getEventDateText(event)
+  }
+
+  // Only add optional fields if they are defined
+  if (event.seat !== undefined) view.seat = event.seat
+  if (event.row !== undefined) view.row = event.row
+  if (event.notes !== undefined) view.notes = event.notes
+
+  return view
+}
+
+// Map events to the detail view and then display
+function buildEventListView(events: readonly AppEvent[]): EventDetailView[] {
+  return events.map(buildEventDetailView)
+}
 
 // Hybrid Type
 type EventWithSummary = {
