@@ -71,7 +71,7 @@ function sortEventsByKind(elementId) {
     selectElement.addEventListener("change", event => {
         const target = event.target;
         const direction = target.value;
-        console.log("Selected direction:", direction);
+        // console.log("Selected direction:", direction)
         if (direction === "desc") {
             allEvents.sort((a, b) => b.type.kind.localeCompare(a.type.kind));
             render(allEvents, "Reversed Events List");
@@ -137,24 +137,22 @@ async function fetchEventByID(id) {
     }
     return { ok: true, data: event };
 }
-fetchEventByID(999) // an ID that doesn't exist
-    .then(result => {
-    if (result.ok) {
-        console.log("Resolved: ", result.data);
-    }
-    else {
-        console.log("Recovered from rejection: ", result.error);
-    }
-});
-fetchEventByID(2) // an ID that does exist
-    .then(result => {
-    if (result.ok) {
-        console.log("Resolved: ", result.data);
-    }
-    else {
-        console.log("Recovered from rejection: ", result.error);
-    }
-});
+// fetchEventByID(999) // an ID that doesn't exist
+//   .then(result => {
+//     if (result.ok) {
+//       console.log("Resolved: ", result.data)
+//     } else {
+//       console.log("Recovered from rejection: ", result.error)
+//     }
+//   })
+// fetchEventByID(2) // an ID that does exist
+//   .then(result => {
+//     if (result.ok) {
+//       console.log("Resolved: ", result.data)
+//     } else {
+//       console.log("Recovered from rejection: ", result.error)
+//     }
+//   })
 // Show event by ID - UI/Presentation layer
 async function showSingleEvent(n) {
     console.log("Loading event...");
@@ -175,9 +173,9 @@ function getProperty(obj, key) {
     return obj[key];
 }
 const getName = getProperty(eventDatabase[0], "name");
-console.log(getName);
+// console.log(getName)
 const getType = getProperty(eventDatabase[3], "type");
-console.log(getType);
+// console.log(getType)
 if (getType === undefined) {
     console.log("Could not find the type of event you're looking for.");
 }
@@ -368,8 +366,8 @@ getEventsByKindViewModel(eventDatabase, { kind: EventKind.Festival });
 function getEventById(eventId) {
     return eventDatabase.find(event => event.id === eventId);
 }
-console.log(`\nHere is the event you wanted to view by ID:`);
-console.log(getEventById(3));
+// console.log(`\nHere is the event you wanted to view by ID:`)
+// console.log(getEventById(3))
 // View Single Event
 function viewEvent(id, container) {
     const singleEvent = getEventById(id);
@@ -437,16 +435,16 @@ function getFirstEventName() {
     return getEventField(firstEvent, "name");
 }
 const eventName = getFirstEventName();
-console.log(eventName);
+// console.log(eventName)
 // Showcasing map()
 const eventNames = eventDatabase.map(event => event.name);
-console.log(eventNames);
+// console.log(eventNames)
 // Showcasing map() pulling in all event ids to new array
 const eventIDs = eventDatabase.map(events => events.id);
-console.log(eventIDs);
+// console.log(eventIDs)
 // Showcasing filter() and finding a string pattern based on an event name
 const eventNamePattern = eventDatabase.filter(eventName => eventName.name === "Cleveland Browns v Pittsburgh Steelers");
-console.log(eventNamePattern);
+// console.log(eventNamePattern)
 // Backend / API Layer
 var EventService;
 (function (EventService) {
