@@ -131,22 +131,24 @@ const sortContainer: HTMLElement | null = document.getElementById("sort-containe
 sortEventsByKind(sortContainer)
 // sortEventsByKind("desc", sortContainer)
 
-// Show all events in database; combines async fetching with try/catch/finally - good because readability, error safety, reliable thanks to finally, easily maintainable
-async function showEvents(): Promise<void> {
-  console.log("Loading events...")
+// helper for getEventsLoadState
+type EventsLoadState = { status: "loading" } | { status: "error"; error: string } | { status: "success"; events: readonly AppEvent[] }
 
+// Show all events in database
+function getEventsLoadState(): EventsLoadState {
   const result = EventService.fetchEventsSafe()
 
   if (!result.ok) {
-    console.log("Error: ", result.error)
-    console.log("Finished attempting to load all events in the database.")
-    return
+    return {
+      status: "error",
+      error: result.error
+    }
   }
 
-  console.log("Here are the list of events after a 1/2 second wait:")
-  console.log(result.data)
-
-  console.log("Finished attempting to load all events in the database.")
+  return {
+    status: "success",
+    events: result.data
+  }
 }
 
 // Fetch events concurrently
@@ -674,4 +676,4 @@ namespace EventService {
   console.log("After addEvent:", eventDatabase)
 }
 
-showEvents()
+getEventsLoadState()

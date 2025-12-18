@@ -85,19 +85,19 @@ function sortEventsByKind(elementId) {
 }
 const sortContainer = document.getElementById("sort-container");
 sortEventsByKind(sortContainer);
-// sortEventsByKind("desc", sortContainer)
-// Show all events in database; combines async fetching with try/catch/finally - good because readability, error safety, reliable thanks to finally, easily maintainable
-async function showEvents() {
-    console.log("Loading events...");
+// Show all events in database
+function getEventsLoadState() {
     const result = EventService.fetchEventsSafe();
     if (!result.ok) {
-        console.log("Error: ", result.error);
-        console.log("Finished attempting to load all events in the database.");
-        return;
+        return {
+            status: "error",
+            error: result.error
+        };
     }
-    console.log("Here are the list of events after a 1/2 second wait:");
-    console.log(result.data);
-    console.log("Finished attempting to load all events in the database.");
+    return {
+        status: "success",
+        events: result.data
+    };
 }
 // Fetch events concurrently
 async function fetchEventsConcurrently(ids) {
@@ -502,6 +502,6 @@ var EventService;
     console.log("ResultThree:", resultThree);
     console.log("After addEvent:", eventDatabase);
 })(EventService || (EventService = {}));
-showEvents();
+getEventsLoadState();
 export {};
 //# sourceMappingURL=index.js.map
