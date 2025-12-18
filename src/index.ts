@@ -56,32 +56,47 @@ function delay(ms: number): Promise<void> {
   })
 }
 
-// Sort events sortDirection: "asc" | "desc", container: HTMLElement | null
+// This function sorts events by their `kind` and wires up a dropdown
+// that lets the user change the sort direction (asc / desc).
+// It returns a Result type so callers must handle success or failure.
 function sortEventsByKind(elementId: HTMLElement | null): Result<AppEvent[]> {
+  // Grab all events from our in-memory database
+  // This is the list we will sort and re-render
   const allEvents = eventDatabase
 
+  // Guard clause: if there are no events, we fail early
+  // Returning a Result instead of throwing keeps this predictable
   if (allEvents.length === 0) {
     return { ok: false, error: `No events found` }
   }
 
+  // Configuration object for the dropdown options
+  // Keeping this data-driven makes it easy to extend later
   const dropdownOpts = [
     { value: "asc", text: "Ascending" },
     { value: "desc", text: "Descending" }
   ]
 
+  // Grab the DOM containers where we’ll render content
+  // One holds the dropdown, the other holds the event list
   const sortContainer = document.getElementById("sort-container")
   const dropdownContainer = document.getElementById("dropdown-container")
 
+  // Another guard clause:
+  // If either container is missing, we can’t safely manipulate the DOM
+  // So we return an error instead of crashing
   if (!dropdownContainer || !sortContainer) {
-    // throw new Error(`Container with ID "${elementId}" not found.`)
     return { ok: false, error: `Container with ID "${elementId}" not found.` }
   }
 
-  // ---- CREATE SELECT ONCE ----
+  // Create the <select> element programmatically
+  // This avoids hard-coding HTML and keeps behavior encapsulated
   const selectElement = document.createElement("select")
   selectElement.id = "direction-selector"
   selectElement.name = "direction"
 
+  // Populate the <select> with <option> elements
+  // Each option comes from our configuration array
   dropdownOpts.forEach(optionData => {
     const optionElement = document.createElement("option")
     optionElement.value = optionData.value
@@ -89,41 +104,56 @@ function sortEventsByKind(elementId: HTMLElement | null): Result<AppEvent[]> {
     selectElement.appendChild(optionElement)
   })
 
+  // Append the completed dropdown into the DOM
   dropdownContainer.appendChild(selectElement)
 
-  // ---- RENDER HELPER ----
+  // This helper function is responsible for rendering the event list
+  // Separating rendering from sorting keeps the logic easier to reason about
   function render(list: AppEvent[], title: string) {
+    // Start building the HTML output
     let html = `<h2>${title}</h2><ul>`
+    // Loop through events and generate list items
     list.forEach(event => {
+      // Extract the kind once for readability
       const kind = event.type.kind
+      // Festivals display a date range; other events display a single date
+      // This conditional keeps that formatting logic in one place
       const date = kind === EventKind.Festival ? `${event.type.dateRange[0]} - ${event.type.dateRange[1]}` : event.date
-
+      // Append the event to the HTML string
       html += `<li>${kind} - ${event.name} - ${date}</li>`
     })
+    // Close the list
     html += "</ul>"
+    // Inject the HTML into the page
+    // The non-null assertion is safe because we guarded earlier
     sortContainer!.innerHTML = html
   }
 
-  // ---- DEFAULT SORT (ASC) ----
+  // Sort events alphabetically by kind on initial load
+  // localeCompare handles string comparison correctly
   allEvents.sort((a, b) => a.type.kind.localeCompare(b.type.kind))
+  // Render the initial sorted list
   render(allEvents, "Events List")
 
-  // ---- EVENT LISTENER (THIS IS WHERE SORTING HAPPENS) ----
+  // Listen for changes to the dropdown
   selectElement.addEventListener("change", event => {
+    // Cast the event target so TypeScript knows it’s a <select>
     const target = event.target as HTMLSelectElement
+    // Read the selected value (asc or desc)
     const direction = target.value
 
-    // console.log("Selected direction:", direction)
-
+    // Re-sort based on the selected direction
     if (direction === "desc") {
+      // Reverse alphabetical sort
       allEvents.sort((a, b) => b.type.kind.localeCompare(a.type.kind))
       render(allEvents, "Reversed Events List")
     } else {
+      // Default ascending sort
       allEvents.sort((a, b) => a.type.kind.localeCompare(b.type.kind))
       render(allEvents, "Events List")
     }
   })
-
+  // If everything succeeded, return the sorted events
   return { ok: true, data: allEvents }
 }
 
