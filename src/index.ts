@@ -248,17 +248,26 @@ async function fetchEventByID(id: number): Promise<Result<AppEvent>> {
 //   })
 
 // Show event by ID - UI/Presentation layer
-async function showSingleEvent(n: number): Promise<void> {
-  console.log("Loading event...")
+// async function showSingleEvent(n: number): Promise<void> {
+//   console.log("Loading event...")
+//   try {
+//     const soloEvent = await fetchEventByID(n)
+//     console.log("Here is the event you requested: ")
+//     console.log(soloEvent)
+//   } catch (err) {
+//     throw err
+//   }
+// }
+// showSingleEvent(1)
+
+async function getSingleEventSafe(id: number): Promise<Result<AppEvent>> {
   try {
-    const soloEvent = await fetchEventByID(n)
-    console.log("Here is the event you requested: ")
-    console.log(soloEvent)
+    const result = await fetchEventByID(id) // returns Promise<Result<AppEvent>>
+    return result // already has ok/data or ok/error
   } catch (err) {
-    throw err
+    return { ok: false, error: (err as Error).message } // convert thrown errors to Result
   }
 }
-showSingleEvent(1)
 
 // Get property generic function
 function getProperty<T extends object, K extends keyof T>(obj: T | undefined, key: K): T[K] | undefined {
